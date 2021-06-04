@@ -44,59 +44,24 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define EX_3 0x04
 
 //	ALU
-#define OP_SHIFT 2
+#define OP_SHIFT 8
 
-#define ALU_NONE 0x00
-
-
-//	ALU_xxをCYやMの追加指定無しで使えるように
-
-#define ALU_CY_CC 0x00
-// #define ALU_CY_INV 0x01
-#define ALU_CY_A7 0x01
-#define ALU_CY_1 0x02
-#define ALU_CY_0 0x03
-
-#define ALU_M (0x01 << 6)
-
-#define ALU_OP_NONE 0x0
-
-#define ALU_OP_ADD ((0x0C << OP_SHIFT) | ALU_CY_0)
-#define ALU_OP_SUB ((0x03 << OP_SHIFT) | ALU_CY_1)
-
-#define ALU_OP_ADDC ((0x0C << OP_SHIFT) | ALU_CY_CC)
-#define ALU_OP_SUBB ((0x03 << OP_SHIFT) | ALU_CY_CC)
-
-#define ALU_OP_ADD0 (0x0 << OP_SHIFT)
-#define ALU_OP_SUB0 (0xF << OP_SHIFT)
-
-
-#define ALU_OP_INC ((0x0 << OP_SHIFT) | ALU_CY_1)
-#define ALU_OP_DEC ((0xF << OP_SHIFT) | ALU_CY_0)
-
-//#define ALU_OP_INC_WC ((0x0 << OP_SHIFT) | ALU_CY_CC)
-//#define ALU_OP_DEC_WC  ((0xF << OP_SHIFT) | ALU_CY_CC)
-
-
-#define ALU_OP_SXT (0x5 << OP_SHIFT)
-#define ALU_OP_x8 (0x7 << OP_SHIFT)
-#define ALU_OP_SHL ((0xA << OP_SHIFT) | ALU_CY_CC)
-
-#define ALU_OP_SHR ((0xD << OP_SHIFT) | ALU_CY_CC)
-#define ALU_OP_SAR ((0xD << OP_SHIFT) | ALU_CY_A7)
-
-#define ALU_OP_BUFF1 ((0xA << OP_SHIFT) | ALU_M)
-#define ALU_OP_BUFF2 ((0xC << OP_SHIFT) | ALU_M)
-
-#define ALU_OP_ALL1 ((0xC << OP_SHIFT) | ALU_M)
-#define ALU_OP_ZERO ((0x0 << OP_SHIFT) | ALU_M)
-
-#define ALU_OP_OR ((0xE << OP_SHIFT) | ALU_M)
-#define ALU_OP_XOR ((0x6 << OP_SHIFT) | ALU_M)
-#define ALU_OP_AND ((0x8 << OP_SHIFT) | ALU_M)
-//#define ALU_OP_NOT ((0x5 << OP_SHIFT) | ALU_M)
-#define ALU_OP_NOT ((0xC << OP_SHIFT) | ALU_M)	//	notはsrcをBuff2に入れる
-
+#define ALU_OP_NOP (0x00 << OP_SHIFT) ; // 0000
+#define ALU_OP_AND (0x01 << OP_SHIFT) ; // 0001
+#define ALU_OP_OR (0x02 << OP_SHIFT) ; // 0010
+#define ALU_OP_XOR (0x03 << OP_SHIFT) ; // 0011
+#define ALU_OP_NOT (0x04 << OP_SHIFT) ; // 0100
+#define ALU_OP_Undef5 (0x05 << OP_SHIFT) ; // 0101
+#define ALU_OP_Undef6 (0x06 << OP_SHIFT) ; // 0110
+#define ALU_OP_SignEx (0x07 << OP_SHIFT) ; // 0111
+#define ALU_OP_A_Thru (0x08 << OP_SHIFT) ; // 1000
+#define ALU_OP_B_Thru (0x09 << OP_SHIFT) ; // 1001
+#define ALU_OP_ADD (0x0A << OP_SHIFT) ; // 1010
+#define ALU_OP_SUB (0x0B << OP_SHIFT) ; // 1011
+#define ALU_OP_ADDC (0x0C << OP_SHIFT) ; // 1100
+#define ALU_OP_SUBB (0x0D << OP_SHIFT) ; // 1101
+#define ALU_OP_ADC0 (0x0E << OP_SHIFT) ; // 1110
+#define ALU_OP_All_1 (0x0F << OP_SHIFT) ; // 1111
 
 
 
