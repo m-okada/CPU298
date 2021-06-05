@@ -1,0 +1,192 @@
+%SIGNAL
+PIN   4 =  A0 
+PIN   5 =  A1 
+PIN   6 =  A2 
+PIN   7 =  A3 
+PIN   8 =  A4 
+PIN   9 =  A5 
+PIN  10 =  A6 
+PIN  11 =  A7 
+PIN  23 =  C7 
+PIN   1 =  CI 
+PIN   3 =  DEC 
+PIN   2 = !Thru 
+PIN  22 =  Y0 
+PIN  15 =  Y1 
+PIN  21 =  Y2 
+PIN  16 =  Y3 
+PIN  20 =  Y4 
+PIN  17 =  Y5 
+PIN  19 =  Y6 
+PIN  18 =  Y7 
+%END
+
+%FIELD
+%END
+
+%EQUATION
+C7 =>
+    A0 & A1 & A2 & A3 & A4 & A5 & A6 & A7 & CI & !DEC
+  # !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & !A7 & CI & DEC
+
+CD0 =>
+    !A0 & CI
+
+CD1 =>
+    !A0 & !A1 & CI
+
+CD2 =>
+    !A0 & !A1 & !A2 & CI
+
+CD3 =>
+    !A0 & !A1 & !A2 & !A3 & CI
+
+CD4 =>
+    !A0 & !A1 & !A2 & !A3 & CI
+
+CD5 =>
+    !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & CI
+
+CD6 =>
+    !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & CI
+
+CD7 =>
+    !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & !A7 & CI
+
+CI0 =>
+    A0 & CI
+
+CI1 =>
+    A0 & A1 & CI
+
+CI2 =>
+    A0 & A1 & A2 & CI
+
+CI3 =>
+    A0 & A1 & A2 & A3 & CI
+
+CI4 =>
+    A0 & A1 & A2 & A3 & CI
+
+CI5 =>
+    A0 & A1 & A2 & A3 & A4 & A5 & CI
+
+CI6 =>
+    A0 & A1 & A2 & A3 & A4 & A5 & A6 & CI
+
+CI7 =>
+    A0 & A1 & A2 & A3 & A4 & A5 & A6 & A7 & CI
+
+Y0 =>
+    !A0 & CI & Thru
+  # A0 & !Thru
+  # A0 & !CI
+
+Y1 =>
+    A0 & !A1 & CI & !DEC & Thru
+  # !A0 & !A1 & CI & DEC & Thru
+  # !A0 & A1 & !DEC
+  # A0 & A1 & DEC
+  # A1 & !Thru
+  # A1 & !CI
+
+Y2 =>
+    A0 & A2 & CI & DEC & Thru
+  # !A0 & A1 & A2 & CI & Thru
+  # !A1 & A2 & CI & !DEC & Thru
+  # A0 & A1 & !A2 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & CI & DEC & Thru
+  # A2 & !CI
+  # A2 & !Thru
+
+Y3 =>
+    A0 & A3 & CI & DEC & Thru
+  # !A1 & A2 & A3 & CI & Thru
+  # !A0 & A1 & A3 & CI & Thru
+  # !A2 & A3 & CI & !DEC & Thru
+  # A0 & A1 & A2 & !A3 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & !A3 & CI & DEC & Thru
+  # A3 & !CI
+  # A3 & !Thru
+
+Y4 =>
+    A0 & A4 & CI & DEC & Thru
+  # !A2 & A3 & A4 & CI & Thru
+  # !A0 & A1 & A4 & CI & Thru
+  # !A1 & A2 & A4 & CI & Thru
+  # !A3 & A4 & CI & !DEC & Thru
+  # A0 & A1 & A2 & A3 & !A4 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & !A3 & !A4 & CI & DEC & Thru
+  # A4 & !CI
+  # A4 & !Thru
+
+Y5 =>
+    A0 & A5 & CI & DEC & Thru
+  # !A2 & A3 & A5 & CI & Thru
+  # !A0 & A1 & A5 & CI & Thru
+  # !A1 & A2 & A5 & CI & Thru
+  # !A3 & A5 & CI & !DEC & Thru
+  # A0 & A1 & A2 & A3 & !A5 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & !A3 & !A5 & CI & DEC & Thru
+  # A5 & !CI
+  # A5 & !Thru
+
+Y6 =>
+    A0 & A1 & A2 & A3 & !A4 & !A5 & A6 & CI & DEC & Thru
+  # A4 & A6 & CI & DEC & Thru
+  # !A4 & A5 & A6 & CI & Thru
+  # !A0 & A1 & A6 & CI & Thru
+  # A0 & !A2 & A6 & CI & Thru
+  # !A1 & A3 & A6 & CI & Thru
+  # A2 & !A3 & !A4 & !A5 & A6 & CI & DEC & Thru
+  # !A3 & A4 & A5 & A6 & CI & !DEC & Thru
+  # !A5 & A6 & CI & !DEC & Thru
+  # A0 & A1 & A2 & A3 & A4 & A5 & !A6 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & CI & DEC & Thru
+  # A6 & !CI
+  # A6 & !Thru
+
+Y7 =>
+    A0 & A1 & A2 & A3 & A4 & !A5 & !A6 & A7 & CI & DEC & Thru
+  # A5 & A7 & CI & DEC & Thru
+  # !A5 & A6 & A7 & CI & Thru
+  # !A0 & A1 & A7 & CI & Thru
+  # !A1 & A2 & A7 & CI & Thru
+  # A0 & !A3 & A7 & CI & Thru
+  # !A2 & A4 & A7 & CI & Thru
+  # A3 & !A4 & !A5 & !A6 & A7 & CI & DEC & Thru
+  # !A4 & A5 & A6 & A7 & CI & !DEC & Thru
+  # !A6 & A7 & CI & !DEC & Thru
+  # A0 & A1 & A2 & A3 & A4 & A5 & A6 & !A7 & CI & !DEC & Thru
+  # !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & !A7 & CI & DEC & Thru
+  # A7 & !CI
+  # A7 & !Thru
+
+C7.oe  =>
+    1 
+
+Y0.oe  =>
+    1 
+
+Y1.oe  =>
+    1 
+
+Y2.oe  =>
+    1 
+
+Y3.oe  =>
+    1 
+
+Y4.oe  =>
+    1 
+
+Y5.oe  =>
+    1 
+
+Y6.oe  =>
+    1 
+
+Y7.oe  =>
+    1 
+
+%END

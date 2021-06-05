@@ -1,0 +1,71 @@
+Name     INC_DEC_8 ;
+PartNo;
+Date     2021/06/05 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G22V10 ;
+
+/* *************** INPUT PINS *********************/
+pin 1 = CI ; /* lowest bit CI=1 INC/DEC */
+pin 2 = !Thru ;
+pin 3 = DEC ;
+pin 4 = A0 ;
+pin 5 = A1 ;
+pin 6 = A2 ;
+pin 7 = A3 ;
+pin 8 = A4 ;
+pin 9 = A5 ;
+pin 10 = A6 ;
+pin 11 = A7 ;
+
+/* *************** OUTPUT PINS *********************/
+pin 23 = C7 ;
+
+pin 22 = Y0 ;
+pin 21 = Y2 ;
+pin 20 = Y4 ;
+pin 19 = Y6 ;
+pin 18 = Y7 ;
+pin 17 = Y5 ;
+pin 16 = Y3 ;
+pin 15 = Y1 ;
+
+CI0 = (CI & A0) ;
+CD0 = (CI & !A0) ;
+
+CI1 = (CI & A0 & A1) ;
+CD1 = (CI & !A0 & !A1) ;
+
+CI2 = (CI & A0 & A1 & A2) ;
+CD2 = (CI & !A0 & !A1 & !A2) ;
+
+CI3 = (CI & A0 & A1 & A2 & A3) ;
+CD3 = (CI & !A0 & !A1 & !A2 & !A3) ;
+
+CI4 = (CI & A0 & A1 & A2 & A3) ;
+CD4 = (CI & !A0 & !A1 & !A2 & !A3) ;
+
+CI5 = (CI & A0 & A1 & A2 & A3 & A4 & A5) ;
+CD5 = (CI & !A0 & !A1 & !A2 & !A3 & !A4 & !A5) ;
+
+CI6 = (CI & A0 & A1 & A2 & A3 & A4 & A5 & A6) ;
+CD6 = (CI & !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6) ;
+
+CI7 = (CI & A0 & A1 & A2 & A3 & A4 & A5 & A6 & A7) ;
+CD7 = (CI & !A0 & !A1 & !A2 & !A3 & !A4 & !A5 & !A6 & !A7) ;
+
+/* Y0 = (CI $ (!A0 & !Thru)) # (A0 & Thru) ; */
+Y0 = ((A0 $ CI) & !Thru) # (A0 & Thru) ;
+Y1 = ((A1 $ (!DEC & CI0) # (DEC & CD0)) & !Thru) # (A1 & Thru) ;
+Y2 = ((A2 $ (!DEC & CI1) # (DEC & CD1)) & !Thru) # (A2 & Thru) ;
+Y3 = ((A3 $ (!DEC & CI2) # (DEC & CD2)) & !Thru) # (A3 & Thru) ;
+Y4 = ((A4 $ (!DEC & CI3) # (DEC & CD3)) & !Thru) # (A4 & Thru) ;
+Y5 = ((A5 $ (!DEC & CI4) # (DEC & CD4)) & !Thru) # (A5 & Thru) ;
+Y6 = ((A6 $ (!DEC & CI5) # (DEC & CD5)) & !Thru) # (A6 & Thru) ;
+Y7 = ((A7 $ (!DEC & CI6) # (DEC & CD6)) & !Thru) # (A7 & Thru) ;
+
+C7 = (!DEC & CI7) # (DEC & CD7) ; /* INC/DEC 1 if carry or bollow */
+
