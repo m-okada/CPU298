@@ -70,7 +70,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define BR_DEC 0x11
 
 #define MEM_WRITE 0x02
-#define MEM_READ 0x02
+#define MEM_READ 0x01
 #define ENDF 0x03
 
 WORD OPECode ;
@@ -94,7 +94,9 @@ WORD make_code(WORD write_read, WORD alu_op, WORD c_inv, WORD wb, WORD wr, WORD 
 WORD NOP ;	//	No operation.
 WORD FETCH_BYTE ;	//	オペコードフェッチ
 WORD FETCH_READDATA ;	//	1バイトフェッチ
-WORD CP_INC ;	//	CP+
+WORD PC_INC ;	//	PC+
+
+WORD HL_PC ;
 
 WORD X_INC ;
 
@@ -108,7 +110,7 @@ void set_opecode(BYTE opcode){
 
 void set_code(WORD code){
 	// printf("[%X:%X]%X\n", OPECode, STEP, code) ;
-	int i=OPECode<<4 | STEP ;
+	int i=OPECode<<4 | (STEP & 0x0f) ;
 	if(rom[i]!=0) printf("![%x:%x]", OPECode, STEP) ;
 	rom[i]=code ;
 	STEP++ ;
@@ -124,13 +126,38 @@ void make_rom(void){
 
 	set_opecode(0xEE) ; // JMPS
 //	code=make_code_imm8(0, 8, FB_BUFF1) ;
-	code = make_code(ENDF, 0, 0, 0, 0, 0, 0) ;
+	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_W, 0, 0, 0) ; // fetch imm8 to W
 	set_code(code) ;
 
+	set_code(PC_INC) ;
+
+	code = make_code(0, ALU_OP_ADD, 0, WB_L, WR_HL, ALU_A_W, ALU_B_L) ; // PCL+W->L
+	set_code(code) ;
+
+
+	set_opecode(CODE_RESET) ; // Reset
+	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xe01 から始まるようにする。
+	code = make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0) ; // 落ち着くまでNOP
+	set_code(code) ;
+	code = make_code(0, ALU_OP_NOP, 0, WB_L, WR_X, 0, 0) ; // 0をLへ
+	set_code(code) ;
+	code = make_code(0, ALU_OP_NOP, 0, WB_H, WR_X, 0, 0) ; // 0をHへ
+	set_code(code) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, BR_THRU) ; // HLをPCへ
+	set_code(code) ;
+
+	set_opecode(CODE_FETCH) ;
+	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, BR_THRU) ; // PC->OUT
+	set_code(code) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, BR_INC) ; // PC+
+	set_code(code) ;
 }
+// make_code(write_read, alu_op, c_inv, write_back, word_reg, alu_a, alu_b) ;
+
 
 void setup(void){
-	CP_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, BR_INC) ;
+	PC_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, BR_INC) ;
+	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B_Thru, 0, 0, WR_PC, 0, ALU_B_BUS) ;
 }
 
 

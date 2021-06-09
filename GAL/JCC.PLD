@@ -1,0 +1,13 @@
+Name     Jcc ;
+PartNo   00 ;
+Date     2021/06/08 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G16v8 ;
+
+pin 2 = OP0 ;
+
+pin 18 = DO_JMP ;
