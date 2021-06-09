@@ -58,7 +58,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define WB_PC 0x07
 
 #define ALU_A_ACC 0
-#define ALU_A__W 1
+#define ALU_A_W 1
 
 #define ALU_B_BUS 0
 #define ALU_B_RET 1
@@ -128,11 +128,11 @@ void make_rom(void){
 //	code=make_code_imm8(0, 8, FB_BUFF1) ;
 	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_W, 0, 0, 0) ; // fetch imm8 to W
 	set_code(code) ;
-
 	set_code(PC_INC) ;
 
 	code = make_code(0, ALU_OP_ADD, 0, WB_L, WR_HL, ALU_A_W, ALU_B_L) ; // PCL+W->L
 	set_code(code) ;
+	// W.SignEx -> W
 
 
 	set_opecode(CODE_RESET) ; // Reset
