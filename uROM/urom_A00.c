@@ -65,9 +65,9 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_B_H 2
 #define ALU_B_L 3
 
-#define BR_THRU 0
-#define BR_INC 1
-#define BR_DEC 0x11
+#define ADDR_THRU 0
+#define ADDR_INC 1
+#define ADDR_DEC 0x11
 
 #define MEM_WRITE 0x02
 #define MEM_READ 0x01
@@ -126,13 +126,17 @@ void make_rom(void){
 
 	set_opecode(0xEE) ; // JMPS
 //	code=make_code_imm8(0, 8, FB_BUFF1) ;
-	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_W, 0, 0, 0) ; // fetch imm8 to W
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_W, WR_PC, 0, 0) ; // fetch imm8 to W
 	set_code(code) ;
 	set_code(PC_INC) ;
-
-	code = make_code(0, ALU_OP_ADD, 0, WB_L, WR_HL, ALU_A_W, ALU_B_L) ; // PCL+W->L
+	code = make_code(0, ALU_OP_ADD, 0, WB_L, WR_PC, ALU_A_W, ALU_B_L) ; // PCL+W->L
 	set_code(code) ;
-	// W.SignEx -> W
+	code = make_code(0, ALU_OP_SignEx, 0, WB_W, 0, ALU_A_W, 0) ;	// W.SignEx -> W
+	set_code(code) ;
+	code = make_code(0, ALU_OP_ADDC, 0, WB_H, WR_PC, ALU_A_W, ALU_B_H) ;	// CY+W+PCH->H
+	set_code(code) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0) ;	// HL->PC
+	set_code(code) ;
 
 
 	set_opecode(CODE_RESET) ; // Reset
@@ -143,20 +147,21 @@ void make_rom(void){
 	set_code(code) ;
 	code = make_code(0, ALU_OP_NOP, 0, WB_H, WR_X, 0, 0) ; // 0をHへ
 	set_code(code) ;
-	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, BR_THRU) ; // HLをPCへ
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, ADDR_THRU) ; // HLをPCへ
 	set_code(code) ;
 
+
 	set_opecode(CODE_FETCH) ;
-	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, BR_THRU) ; // PC->OUT
+	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, ADDR_THRU) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
 	set_code(code) ;
-	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, BR_INC) ; // PC+
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
 	set_code(code) ;
 }
 // make_code(write_read, alu_op, c_inv, write_back, word_reg, alu_a, alu_b) ;
 
 
 void setup(void){
-	PC_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, BR_INC) ;
+	PC_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ;
 	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B_Thru, 0, 0, WR_PC, 0, ALU_B_BUS) ;
 }
 

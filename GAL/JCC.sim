@@ -1,0 +1,29 @@
+%SIGNAL
+PIN  18 =  DO_JMP_Y 
+PIN  17 =  JMP_OP_Y 
+PIN   2 =  OP0 
+PIN   3 =  OP1 
+PIN   4 =  OP2 
+PIN   5 =  OP3 
+PIN   6 =  OP4 
+PIN   7 =  OP5 
+PIN   8 =  OP6 
+PIN   9 =  OP7 
+PIN  11 =  cf 
+PIN  10 =  zf 
+%END
+
+%FIELD
+%END
+
+%EQUATION
+JMP_OP =>
+    !OP3 & !OP4 & OP5 & OP6 & OP7
+
+JMP_OP_Y =>
+    !OP3 & !OP4 & OP5 & OP6 & OP7
+
+JMP_OP_Y.oe  =>
+    1 
+
+%END

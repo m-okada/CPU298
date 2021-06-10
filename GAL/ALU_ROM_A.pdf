@@ -1,11 +1,11 @@
-{COMPONENT E:\CPU298\CPU298\GAL\ALU_ROM.SYM
+{COMPONENT E:\CPU298\CPU298\GAL\ALU_ROM_A.SYM
 
  {ENVIRONMENT
   {PDIFvrev 3.00}
   {Program "CUPL(WM) Version 5.0a"}
   {DBtype "Schematic"}
   {DBvrev 1.01}
-  {DBtime "Fri Jun 11 03:44:02 2021 "}
+  {DBtime "Thu Jun 10 11:05:42 2021 "}
   {DBunit "MIL"}
   {DBgrid 10}
   {Lyrstr "WIRES" 1 "BUS" 1 "GATE" 2 "IEEE" 2 "PINFUN" 3 "PINNUM" 1 
@@ -33,30 +33,26 @@
  {SYMBOL
   {PIN_DEF
    [Ly "PINCON"]
-   {P A0 {Pt "INPUT"}{Lq 0}{Ploc 100 180}}
-   {P A1 {Pt "INPUT"}{Lq 0}{Ploc 100 160}}
-   {P A2 {Pt "INPUT"}{Lq 0}{Ploc 100 140}}
-   {P M {Pt "INPUT"}{Lq 0}{Ploc 100 120}}
-   {P D0 {Pt "INPUT"}{Lq 0}{Ploc 100 100}}
-   {P D1 {Pt "INPUT"}{Lq 0}{Ploc 100 80}}
-   {P MO {Pt "INPUT"}{Lq 0}{Ploc 100 60}}
-   {P FL {Pt "INPUT"}{Lq 0}{Ploc 100 40}}
-   {P SIGNEX {Pt "INPUT"}{Lq 0}{Ploc 100 20}}
-   {P D2 {Pt "I/O"}{Lq 0}{Ploc 280 20}}
-   {P D3 {Pt "I/O"}{Lq 0}{Ploc 280 40}}
+   {P A0 {Pt "INPUT"}{Lq 0}{Ploc 100 100}}
+   {P A1 {Pt "INPUT"}{Lq 0}{Ploc 100 80}}
+   {P A2 {Pt "INPUT"}{Lq 0}{Ploc 100 60}}
+   {P M {Pt "INPUT"}{Lq 0}{Ploc 100 40}}
+   {P MO {Pt "INPUT"}{Lq 0}{Ploc 100 20}}
+   {P D0 {Pt "I/O"}{Lq 0}{Ploc 280 20}}
+   {P D1 {Pt "I/O"}{Lq 0}{Ploc 280 40}}
+   {P D2 {Pt "I/O"}{Lq 0}{Ploc 280 60}}
+   {P D3 {Pt "I/O"}{Lq 0}{Ploc 280 80}}
+   {P FL {Pt "I/O"}{Lq 0}{Ploc 280 100}}
+   {P SIGNEX {Pt "I/O"}{Lq 0}{Ploc 280 120}}
   }
 
   {PKG
    [Ly "REFDES"]
    [Ts 25][Tj "CB"][Tr 0][Tm "N"]
-   {Rdl 190 210}
+   {Rdl 190 150}
 
    [Ly "PINNUM"]
    [Ts 15][Tj "RC"]
-   {Pnl 120 190}
-   {Pnl 120 170}
-   {Pnl 120 150}
-   {Pnl 120 130}
    {Pnl 120 110}
    {Pnl 120 90}
    {Pnl 120 70}
@@ -65,18 +61,18 @@
    [Ts 15][Tj "LC"]
    {Pnl 260 30}
    {Pnl 260 50}
+   {Pnl 260 70}
+   {Pnl 260 90}
+   {Pnl 260 110}
+   {Pnl 260 130}
 
-   {Sd A 2 3 4 5 13 14 17 18 19 15 16}
+   {Sd A 2 3 4 5 18 14 15 16 17 19 20}
   }
 
   {PIC
    [Ly "GATE"]
    [Ts 15][Tj "LC"][Tr 0][Tm "N"]
-   {R 130 200 250 0}
-   {L 130 180 100 180}
-   {L 130 160 100 160}
-   {L 130 140 100 140}
-   {L 130 120 100 120}
+   {R 130 140 250 0}
    {L 130 100 100 100}
    {L 130 80 100 80}
    {L 130 60 100 60}
@@ -84,23 +80,27 @@
    {L 130 20 100 20}
    {L 250 20 280 20}
    {L 250 40 280 40}
+   {L 250 60 280 60}
+   {L 250 80 280 80}
+   {L 250 100 280 100}
+   {L 250 120 280 120}
    [Ly "PINNAM"]
    [Tj "LC"]
-   {T "A0" 140 180}
-   {T "A1" 140 160}
-   {T "A2" 140 140}
-   {T "M" 140 120}
-   {T "D0" 140 100}
-   {T "D1" 140 80}
-   {T "MO" 140 60}
-   {T "FL" 140 40}
-   {T "SIGNEX" 140 20}
+   {T "A0" 140 100}
+   {T "A1" 140 80}
+   {T "A2" 140 60}
+   {T "M" 140 40}
+   {T "MO" 140 20}
    [Tj "RC"]
-   {T "D2" 240 20}
-   {T "D3" 240 40}
+   {T "D0" 240 20}
+   {T "D1" 240 40}
+   {T "D2" 240 60}
+   {T "D3" 240 80}
+   {T "FL" 240 100}
+   {T "SIGNEX" 240 120}
    [Ly "DEVICE"]
    [Tj "CT"]
-   {T "G16V8S" 190 -10}
+   {T "G22V10" 190 -10}
   }
 
   {ATR
@@ -111,7 +111,7 @@
    {EX
     [Ly "ATTR2"]
     [Ts 12][Tj "CT"][Tr 0][Tm "N"]
-    {At PLD E:\CPU298\CPU298\GAL\ALU_ROM 190 200}
+    {At PLD E:\CPU298\CPU298\GAL\ALU_ROM_A 190 140}
    }
   }
  }
@@ -129,19 +129,19 @@
    }
    {N M
    }
+   {N MO
+   }
    {N D0
    }
    {N D1
    }
-   {N MO
+   {N D2
+   }
+   {N D3
    }
    {N FL
    }
    {N SIGNEX
-   }
-   {N D2
-   }
-   {N D3
    }
   }
 

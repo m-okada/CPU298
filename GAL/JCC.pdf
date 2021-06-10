@@ -1,11 +1,11 @@
-{COMPONENT E:\CPU298\CPU298\GAL\ALU_ROM.SYM
+{COMPONENT E:\CPU298\CPU298\GAL\JCC.SYM
 
  {ENVIRONMENT
   {PDIFvrev 3.00}
   {Program "CUPL(WM) Version 5.0a"}
   {DBtype "Schematic"}
   {DBvrev 1.01}
-  {DBtime "Fri Jun 11 03:44:02 2021 "}
+  {DBtime "Thu Jun 10 15:57:02 2021 "}
   {DBunit "MIL"}
   {DBgrid 10}
   {Lyrstr "WIRES" 1 "BUS" 1 "GATE" 2 "IEEE" 2 "PINFUN" 3 "PINNUM" 1 
@@ -33,26 +33,29 @@
  {SYMBOL
   {PIN_DEF
    [Ly "PINCON"]
-   {P A0 {Pt "INPUT"}{Lq 0}{Ploc 100 180}}
-   {P A1 {Pt "INPUT"}{Lq 0}{Ploc 100 160}}
-   {P A2 {Pt "INPUT"}{Lq 0}{Ploc 100 140}}
-   {P M {Pt "INPUT"}{Lq 0}{Ploc 100 120}}
-   {P D0 {Pt "INPUT"}{Lq 0}{Ploc 100 100}}
-   {P D1 {Pt "INPUT"}{Lq 0}{Ploc 100 80}}
-   {P MO {Pt "INPUT"}{Lq 0}{Ploc 100 60}}
-   {P FL {Pt "INPUT"}{Lq 0}{Ploc 100 40}}
-   {P SIGNEX {Pt "INPUT"}{Lq 0}{Ploc 100 20}}
-   {P D2 {Pt "I/O"}{Lq 0}{Ploc 280 20}}
-   {P D3 {Pt "I/O"}{Lq 0}{Ploc 280 40}}
+   {P OP0 {Pt "INPUT"}{Lq 0}{Ploc 100 220}}
+   {P OP1 {Pt "INPUT"}{Lq 0}{Ploc 100 200}}
+   {P OP2 {Pt "INPUT"}{Lq 0}{Ploc 100 180}}
+   {P OP3 {Pt "INPUT"}{Lq 0}{Ploc 100 160}}
+   {P OP4 {Pt "INPUT"}{Lq 0}{Ploc 100 140}}
+   {P OP5 {Pt "INPUT"}{Lq 0}{Ploc 100 120}}
+   {P OP6 {Pt "INPUT"}{Lq 0}{Ploc 100 100}}
+   {P OP7 {Pt "INPUT"}{Lq 0}{Ploc 100 80}}
+   {P ZF {Pt "INPUT"}{Lq 0}{Ploc 100 60}}
+   {P CF {Pt "INPUT"}{Lq 0}{Ploc 100 40}}
+   {P DO_JMP_Y {Pt "INPUT"}{Lq 0}{Ploc 100 20}}
+   {P JMP_OP_Y {Pt "I/O"}{Lq 0}{Ploc 360 20}}
   }
 
   {PKG
    [Ly "REFDES"]
    [Ts 25][Tj "CB"][Tr 0][Tm "N"]
-   {Rdl 190 210}
+   {Rdl 230 250}
 
    [Ly "PINNUM"]
    [Ts 15][Tj "RC"]
+   {Pnl 120 230}
+   {Pnl 120 210}
    {Pnl 120 190}
    {Pnl 120 170}
    {Pnl 120 150}
@@ -63,16 +66,17 @@
    {Pnl 120 50}
    {Pnl 120 30}
    [Ts 15][Tj "LC"]
-   {Pnl 260 30}
-   {Pnl 260 50}
+   {Pnl 340 30}
 
-   {Sd A 2 3 4 5 13 14 17 18 19 15 16}
+   {Sd A 2 3 4 5 6 7 8 9 10 11 18 17}
   }
 
   {PIC
    [Ly "GATE"]
    [Ts 15][Tj "LC"][Tr 0][Tm "N"]
-   {R 130 200 250 0}
+   {R 130 240 330 0}
+   {L 130 220 100 220}
+   {L 130 200 100 200}
    {L 130 180 100 180}
    {L 130 160 100 160}
    {L 130 140 100 140}
@@ -82,25 +86,25 @@
    {L 130 60 100 60}
    {L 130 40 100 40}
    {L 130 20 100 20}
-   {L 250 20 280 20}
-   {L 250 40 280 40}
+   {L 330 20 360 20}
    [Ly "PINNAM"]
    [Tj "LC"]
-   {T "A0" 140 180}
-   {T "A1" 140 160}
-   {T "A2" 140 140}
-   {T "M" 140 120}
-   {T "D0" 140 100}
-   {T "D1" 140 80}
-   {T "MO" 140 60}
-   {T "FL" 140 40}
-   {T "SIGNEX" 140 20}
+   {T "OP0" 140 220}
+   {T "OP1" 140 200}
+   {T "OP2" 140 180}
+   {T "OP3" 140 160}
+   {T "OP4" 140 140}
+   {T "OP5" 140 120}
+   {T "OP6" 140 100}
+   {T "OP7" 140 80}
+   {T "ZF" 140 60}
+   {T "CF" 140 40}
+   {T "DO_JMP_Y" 140 20}
    [Tj "RC"]
-   {T "D2" 240 20}
-   {T "D3" 240 40}
+   {T "JMP_OP_Y" 320 20}
    [Ly "DEVICE"]
    [Tj "CT"]
-   {T "G16V8S" 190 -10}
+   {T "G20V8MA" 230 -10}
   }
 
   {ATR
@@ -111,7 +115,7 @@
    {EX
     [Ly "ATTR2"]
     [Ts 12][Tj "CT"][Tr 0][Tm "N"]
-    {At PLD E:\CPU298\CPU298\GAL\ALU_ROM 190 200}
+    {At PLD E:\CPU298\CPU298\GAL\JCC 230 240}
    }
   }
  }
@@ -121,27 +125,29 @@
   }
 
   {NET_DEF
-   {N A0
+   {N OP0
    }
-   {N A1
+   {N OP1
    }
-   {N A2
+   {N OP2
    }
-   {N M
+   {N OP3
    }
-   {N D0
+   {N OP4
    }
-   {N D1
+   {N OP5
    }
-   {N MO
+   {N OP6
    }
-   {N FL
+   {N OP7
    }
-   {N SIGNEX
+   {N ZF
    }
-   {N D2
+   {N CF
    }
-   {N D3
+   {N DO_JMP_Y
+   }
+   {N JMP_OP_Y
    }
   }
 

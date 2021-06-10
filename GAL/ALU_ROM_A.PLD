@@ -6,7 +6,7 @@ Designer Engineer ;
 Company  Symphony Co.,Ltd. ;
 Assembly None ;
 Location  ;
-Device   G16V8 ;
+Device   G22V10 ;
 
 
 PIN 2 = A0 ;
@@ -14,13 +14,15 @@ PIN 3 = A1 ;
 pin 4 = A2 ;
 pin 5 = M ;
 
-pin 19 = SignEx ;
-pin 18 = FL ;
-PIN 17 = Mo ;
-PIN 16 = D3 ;
-PIN 15 = D2 ;
-PIN 14 = D1 ;
-PIN 13 = D0 ;
+pin 22 = Cout_Y ;
+pin 21 = Cin_Y ;
+pin 20 = SignEx ;
+pin 19 = FL ;
+PIN 18 = Mo ;
+PIN 17 = D3 ;
+PIN 16 = D2 ;
+PIN 15 = D1 ;
+PIN 14 = D0 ;
 
 SignEx = !A2 & A1 & A0 & M ;
 
@@ -28,11 +30,9 @@ D3 = (!A2 & !A0 & M)#(!A2 & A0 & !M)#(A1 & A0 & M)#(A2 & !A1 & !A0)#(A2 & !A1 & 
 D2 = (!A2 & !A1 & A0)#(!A1 & A0 & !M)#(A1 & !A0 & !M)#(A2 & !A1 & !A0 & M)#(A2 & A1 & A0 & M) ;
 D1 = (!A2 & A0)#(A0 & M)#(A2 & !A1 & !A0 & !M)#(A2 & A1 & M) ;
 D0 = (!A2 & A1)#(A1 & M)#(A2 & A0 & M) ;
-/*M0 = (!A2 & !A1)#(!A2 & !A0 & !M)#(!A1 & !A0)#(A2 & A1 & A0 & M) ;*/
-Mo = (!A2 & !A1)#(!A2 & !A0 & !M)#(!A1 & !A0)#(A1 & A0 & M) ;
-
+M0 = (!A2 & !A1)#(!A2 & !A0 & !M)#(!A1 & !A0)#(A2 & A1 & A0 & M) ;
 /*Ci = (A1) ;*/
-/*FL = !(!A1 & !A0 & !M)#(A2 & !A1 & !A0)#(A2 & A1 & A0 & M) ;*/
-FL = (!A1 & !A0 & !M) # (A1 & A0 & M) # (A2 & !A1 & !A0) ;
+FL = !(!A1 & !A0 & !M)#(A2 & !A1 & !A0)#(A2 & A1 & A0 & M) ;
+
 
 

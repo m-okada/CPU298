@@ -6,8 +6,14 @@ Designer Engineer ;
 Company  Symphony Co.,Ltd. ;
 Assembly None ;
 Location  ;
-Device   G16v8 ;
+Device   G20v8ma ;
 
-pin 2 = OP0 ;
+pin [2..9] = [OP0..7] ;
+pin 10 = zf ;
+pin 11 = cf ;
 
-pin 18 = DO_JMP ;
+pin 18 = DO_JMP_Y ;
+pin 17 = JMP_OP_Y ;
+
+JMP_OP = OP7 & OP6 & OP5 & !OP4 & !OP3 ;
+JMP_OP_Y = JMP_OP ;
