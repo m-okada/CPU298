@@ -62,3 +62,25 @@ ISAによっては実用的なCPUになる
 割り込み
 DMA
 
+
+
+ALU-OP
+
+ALUOP table
+		A2	A1	A0	M	CFIn CFOut		1:1	1:0	0:1	0:0	Mo	Cin	F	CinInv<-bit0 Cout(C or 0)=!M
+NOP		0	0	0	0	x	0	0	0	0	0	1	x	0	(ALL-0)
+AND		0	0	0	1	x	0	1	0	0	0	1	x	1
+OR		0	0	1	0	x	0	1	1	1	0	1	x	1
+XOR		0	0	1	1	x	0	0	1	1	0	1	x	1
+NOT A	0	1	0	0	x	0	0	1	0	1	1	x	1
+		0	1	0	1
+		0	1	1	0
+		0	1	1	1
+A-Thru	1	0	0	0	x	0	1	0	1	0	1	x	0
+B-Thru	1	0	0	1	x	0	1	1	0	0	1	x	0
+ADD		1	0	1	0	0	C	1	1	0	0	0	0	1
+SUB		1	0	1	1	1	!C	0	0	1	1	0	0	1
+ADDC	1	1	0	0	C	C	1	1	0	0	0	1	1
+SUBB	1	1	0	1	!C	!C	0	0	1	1	0	1	1
+ADC0	1	1	1	0	C	C	0	0	0	0	0	1	1
+All-1	1	1	1	1	x	0	1	1	1	1	1	x	0

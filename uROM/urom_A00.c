@@ -61,7 +61,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_A_W 1
 
 #define ALU_B_BUS 0
-#define ALU_B_RET 1
+#define ALU_B_W 1
 #define ALU_B_H 2
 #define ALU_B_L 3
 
@@ -73,16 +73,18 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define MEM_READ 0x01
 #define ENDF 0x03
 
+#define OP_EX_NONE 0
+
 WORD OPECode ;
 BYTE STEP ;
 
 
-WORD make_code(WORD write_read, WORD alu_op, WORD c_inv, WORD wb, WORD wr, WORD alu_a, WORD alu_b){
+WORD make_code(WORD write_read, WORD alu_op, WORD op_ex, WORD wb, WORD wr, WORD alu_a, WORD alu_b){
 	WORD retval=0 ;
 
 	retval |= (write_read & 0x03) << 14 ;
-	retval |= (alu_op & 0x0f) << 9 ;
-	retval |= (c_inv & 0x01) << 8 ;
+	retval |= (op_ex & 0x03) << 12 ;
+	retval |= (alu_op & 0x0f) << 8 ;
 	retval |= (wb & 0x7) << 5 ;
 	retval |= (wr & 0x3) << 3 ;
 	retval |= (alu_a & 0x1) << 2 ;
@@ -157,7 +159,7 @@ void make_rom(void){
 	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
 	set_code(code) ;
 }
-// make_code(write_read, alu_op, c_inv, write_back, word_reg, alu_a, alu_b) ;
+// make_code(write_read, alu_op, 0, write_back, word_reg, alu_a, alu_b) ;
 
 
 void setup(void){
@@ -206,6 +208,55 @@ void write_romfile(void){
 		}
 	}
 	fclose(fp) ;
+
+
+	fp=fopen("298uROM_L.HEX", "wb") ;
+
+	WORD chksum=0, addr=0 ;
+
+	for(i=0 ; i<ROM_SIZE ; i++){
+		if((i%16)==0){
+			fprintf(fp, ":10") ;
+			fprintf(fp, "%04X", addr) ;
+			fprintf(fp, "00") ;
+			chksum = 0x10+(addr & 0xff)+((addr>>8)&0xff) ;
+			addr+=16 ;
+		}
+
+		fprintf(fp, "%02X", (rom[i] & 0xff)) ;
+		chksum += (rom[i] & 0xff) ;
+		if((i%16)==15){
+			fprintf(fp, "%02X\x0D\x0A", ((-chksum) & 0xff)) ;
+			chksum=0 ;
+		}
+	}
+	fprintf(fp, ":00000001FF\x0D\x0A") ;
+	fclose(fp) ;
+
+
+	fp=fopen("298uROM_H.HEX", "wb") ;
+
+	chksum=0, addr=0 ;
+
+	for(i=0 ; i<ROM_SIZE ; i++){
+		if((i%16)==0){
+			fprintf(fp, ":10") ;
+			fprintf(fp, "%04X", addr) ;
+			fprintf(fp, "00") ;
+			chksum = 0x10+(addr & 0xff)+((addr>>8)&0xff) ;
+			addr+=16 ;
+		}
+
+		fprintf(fp, "%02X", ((rom[i]>>8) & 0xff)) ;
+		chksum += ((rom[i]>>8) & 0xff) ;
+		if((i%16)==15){
+			fprintf(fp, "%02X\x0D\x0A", ((-chksum) & 0xff)) ;
+			chksum=0 ;
+		}
+	}
+	fprintf(fp, ":00000001FF\x0D\x0A") ;
+	fclose(fp) ;
+
 
 	fp=fopen("298uROM.h", "w") ;
 	fprintf(fp, "static unsigned int urom[]={\n") ;
