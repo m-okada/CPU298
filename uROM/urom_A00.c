@@ -72,6 +72,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define MEM_WRITE 0x02
 #define MEM_READ 0x01
 #define ENDF 0x03
+#define END_MARK (ENDF << 14)
 
 #define OP_EX_NONE 0
 
@@ -97,8 +98,7 @@ WORD NOP ;	//	No operation.
 WORD FETCH_BYTE ;	//	オペコードフェッチ
 WORD FETCH_READDATA ;	//	1バイトフェッチ
 WORD PC_INC ;	//	PC+
-
-WORD HL_PC ;
+WORD HLPC ;
 
 WORD X_INC ;
 
@@ -122,9 +122,27 @@ void make_rom(void){
 	WORD code ;
 	int i, n ;
 
-	set_opecode(0) ; //NOP
+	set_opecode(0) ; // NOP
 	code = make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, 0, ALU_A_ACC, ALU_B_BUS) ;
 	set_code(code) ;
+
+
+	set_opecode(0x08) ; // MOV A,imm8
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_ACC, WR_PC, 0, ALU_B_BUS) ;
+	set_code(code) ;
+	set_code(PC_INC | END_MARK) ;
+
+
+	set_opecode(0x60) ; // MOV X,imm16
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_L, WR_PC, 0, ALU_B_BUS) ;
+	set_code(code) ;
+	set_code(PC_INC) ;
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_H, WR_PC, 0, ALU_B_BUS) ;
+	set_code(code) ;
+	set_code(PC_INC) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0) ;	// HL->PC
+	set_code(code) ;
+
 
 	set_opecode(0xEE) ; // JMPS
 //	code=make_code_imm8(0, 8, FB_BUFF1) ;
@@ -141,13 +159,17 @@ void make_rom(void){
 	set_code(code) ;
 
 
+	set_opecode(0xEF) ; // JMPN @（検証まだ）
+	set_code(PC_INC | END_MARK) ;
+
+
 	set_opecode(CODE_RESET) ; // Reset
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xe01 から始まるようにする。
 	code = make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0) ; // 落ち着くまでNOP
 	set_code(code) ;
-	code = make_code(0, ALU_OP_NOP, 0, WB_L, WR_X, 0, 0) ; // 0をLへ
+	code = make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0) ; // 0をLへ
 	set_code(code) ;
-	code = make_code(0, ALU_OP_NOP, 0, WB_H, WR_X, 0, 0) ; // 0をHへ
+	code = make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0) ; // 0をHへ
 	set_code(code) ;
 	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, ADDR_THRU) ; // HLをPCへ
 	set_code(code) ;
@@ -156,8 +178,8 @@ void make_rom(void){
 	set_opecode(CODE_FETCH) ;
 	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, ADDR_THRU) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
 	set_code(code) ;
-	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
-	set_code(code) ;
+//	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
+	set_code(PC_INC) ;
 }
 // make_code(write_read, alu_op, 0, write_back, word_reg, alu_a, alu_b) ;
 
@@ -165,6 +187,7 @@ void make_rom(void){
 void setup(void){
 	PC_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ;
 	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B_Thru, 0, 0, WR_PC, 0, ALU_B_BUS) ;
+	HLPC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, ADDR_THRU) ; // HLをPCへ
 }
 
 
