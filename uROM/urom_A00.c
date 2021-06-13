@@ -140,7 +140,18 @@ void make_rom(void){
 	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_H, WR_PC, 0, ALU_B_BUS) ;
 	set_code(code) ;
 	set_code(PC_INC) ;
-	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0) ;	// HL->PC
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_X, WR_HL, 0, 0) ;	// HL->X
+	set_code(code) ;
+
+
+	set_opecode(0x61) ; // MOV Y,imm16
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_L, WR_PC, 0, ALU_B_BUS) ;
+	set_code(code) ;
+	set_code(PC_INC) ;
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_H, WR_PC, 0, ALU_B_BUS) ;
+	set_code(code) ;
+	set_code(PC_INC) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_Y, WR_HL, 0, 0) ;	// HL->Y
 	set_code(code) ;
 
 
