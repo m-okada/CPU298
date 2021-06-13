@@ -127,6 +127,13 @@ void make_rom(void){
 	set_code(code) ;
 
 
+	set_opecode(0x02) ; // ST [X],A
+	code = make_code(MEM_WRITE, ALU_OP_B_Thru, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_W) ;
+	set_code(code) ;
+	code = make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_W) ;
+	set_code(code) ;
+
+
 	set_opecode(0x08) ; // MOV A,imm8
 	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_ACC, WR_PC, 0, ALU_B_BUS) ;
 	set_code(code) ;
@@ -190,7 +197,7 @@ void make_rom(void){
 	code = make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, ADDR_THRU) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
 	set_code(code) ;
 //	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
-	set_code(PC_INC) ;
+	set_code(PC_INC | END_MARK) ;
 }
 // make_code(write_read, alu_op, 0, write_back, word_reg, alu_a, alu_b) ;
 
