@@ -89,3 +89,25 @@ ADDC	1	1	0	0	C	C	1	1	0	0	0	1	1
 SUBB	1	1	0	1	!C	!C	0	0	1	1	0	1	1
 ADC0	1	1	1	0	C	C	0	0	0	0	0	1	1
 All-1	1	1	1	1	x	0	1	1	1	1	1	x	0
+
+
+JA
+JNBE	SHORT L	2	符号なし比較で「>」なら分岐
+条件：(CF OR ZF) = 0	ODITSZAPC
+
+CF==0 & ZF==0
+
+.........
+JAE
+JNB	SHORT L	2	符号なし比較で「>=」なら分岐
+条件：CF = 0	ODITSZAPC
+.........
+JB
+JNAE	SHORT L	2	符号なし比較で「<」なら分岐
+条件：CF = 1	ODITSZAPC
+.........
+JBE
+JNA	SHORT L	2	符号なし比較で「<=」なら分岐
+条件：(CF OR ZF) = 1
+
+CF==1 | ZF==1
