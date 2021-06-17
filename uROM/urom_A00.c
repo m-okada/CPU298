@@ -128,10 +128,22 @@ void make_rom(void){
 
 
 	set_opecode(0x02) ; // ST [X],A
-	code = make_code(MEM_WRITE, ALU_OP_B_Thru, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_W) ;
+	code = make_code(MEM_WRITE, ALU_OP_A_Thru, 0, WB_NONE, WR_X, ALU_A_ACC, ADDR_THRU) ;
 	set_code(code) ;
 	code = make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_W) ;
 	set_code(code) ;
+
+	set_opecode(0x06) ; // MOV A,[X+imm8]
+	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_W, WR_PC, 0, ALU_B_BUS) ; // imm8->W
+	set_code(code) ;
+	code = make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, BUS_A_W, ALU_B_L) ; // W+XL->L
+	set_code(code) ;
+	code = make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, BUS_A_W, ALU_B_L) ; // XH+0+CY->H
+	set_code(code) ;
+	// HL->X
+	// [X]->L
+	// [X+1]->H
+	// HL->X
 
 
 	set_opecode(0x08) ; // MOV A,imm8
@@ -140,7 +152,7 @@ void make_rom(void){
 	set_code(PC_INC | END_MARK) ;
 
 
-	set_opecode(0x60) ; // MOV X,imm16
+	set_opecode(0x28) ; // MOV X,imm16
 	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_L, WR_PC, 0, ALU_B_BUS) ;
 	set_code(code) ;
 	set_code(PC_INC) ;
