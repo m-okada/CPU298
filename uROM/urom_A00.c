@@ -37,8 +37,8 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_B_Thru (0x09)
 #define ALU_OP_ADD (0x0A)
 #define ALU_OP_SUB (0x0B)
-#define ALU_OP_ADDC (0x0C)
-#define ALU_OP_SUBB (0x0D)
+#define ALU_OP_ADC (0x0C)
+#define ALU_OP_SBB (0x0D)
 #define ALU_OP_ADC0 (0x0E)
 #define ALU_OP_All_1 (0x0F)
 
@@ -67,7 +67,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 
 #define ADDR_THRU 0
 #define ADDR_INC 1
-#define ADDR_DEC 0x11
+#define ADDR_DEC 3
 
 #define MEM_WRITE 0x02
 #define MEM_READ 0x01
@@ -127,7 +127,7 @@ void make_rom(void){
 
 
 	set_opecode(0x02) ; // ST [X],A
-	set_code(make_code(MEM_WRITE, ALU_OP_A_Thru, 0, WB_NONE, WR_X, ALU_A_ACC, ADDR_THRU)) ;
+	set_code(make_code(MEM_WRITE, ALU_OP_A_Thru, ADDR_THRU, WB_NONE, WR_X, ALU_A_ACC, ALU_B_BUS)) ;
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_W)) ;
 
 
@@ -137,16 +137,17 @@ void make_rom(void){
 
 
 	set_opecode(0x0E) ; // MOV A,[X+imm8]
-	code = make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_W, WR_PC, 0, ALU_B_BUS) ; // imm8->W
-	set_code(code) ;
-	code = make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L) ; // W+XL->L
-	set_code(code) ;
-	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // XH+0+CY->H
-	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// HL->X
-	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X]->L
-	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X+1]->H
-	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// HL->X
-	set_code(PC_INC | END_MARK) ;
+	set_code(make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
+	set_code(PC_INC) ;
+	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // W+XL->L
+	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_W, WR_X, ALU_A_ACC, ALU_B_H)) ; // XH->W
+	set_code(make_code(0, ALU_OP_ADC0, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // XH+0+CY->H
+
+	set_code(make_code(0, 0, ADDR_THRU, WB_X, WR_HL, 0, 0)) ;// HL->X
+//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X]->L
+//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X+1]->H
+//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// HL->X
+	set_code(make_code(ENDF, ALU_OP_B_Thru, ADDR_THRU, WB_ACC, WR_X, ALU_A_ACC, 0)) ;// [X]->A
 
 
 	set_opecode(0x28) ; // MOV X,imm16
@@ -175,7 +176,7 @@ void make_rom(void){
 	set_code(PC_INC) ;
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_PC, ALU_A_W, ALU_B_L)) ; // PCL+W->L
 	set_code(make_code(0, ALU_OP_SignEx, 0, WB_W, 0, ALU_A_W, 0)) ;	// W.SignEx -> W
-	set_code(make_code(0, ALU_OP_ADDC, 0, WB_H, WR_PC, ALU_A_W, ALU_B_H)) ;	// CY+W+PCH->H
+	set_code(make_code(0, ALU_OP_ADC, 0, WB_H, WR_PC, ALU_A_W, ALU_B_H)) ;	// CY+W+PCH->H
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0)) ;	// HL->PC
 
 
@@ -186,13 +187,13 @@ void make_rom(void){
 	set_opecode(CODE_RESET) ; // Reset
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xe01 から始まるようにする。
 	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0を)Lへ
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0を)Hへ
-	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, ADDR_THRU)) ; // HLをPCへ
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0をLへ
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
+	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_PC, WR_HL, 0, 0)) ; // HLをPCへ
 
 
 	set_opecode(CODE_FETCH) ;
-	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_NONE, WR_PC, 0, ADDR_THRU)) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
+	set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_NONE, WR_PC, 0, 0)) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
 //	code = make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ; // PC+
 	set_code(PC_INC | END_MARK) ;
 }
@@ -200,9 +201,9 @@ void make_rom(void){
 
 
 void setup(void){
-	PC_INC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_PC, 0, ADDR_INC) ;
+	PC_INC = make_code(0, ALU_OP_NOP, ADDR_INC, WB_PC, WR_PC, 0, ALU_B_BUS) ;
 	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B_Thru, 0, 0, WR_PC, 0, ALU_B_BUS) ;
-	HLPC = make_code(0, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, ADDR_THRU) ; // HLをPCへ
+	HLPC = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_PC, WR_HL, 0, 0) ; // HLをPCへ
 }
 
 

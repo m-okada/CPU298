@@ -91,6 +91,14 @@ ADC0	1	1	1	0	C	C	0	0	0	0	0	1	1
 All-1	1	1	1	1	x	0	1	1	1	1	1	x	0
 
 
+OP-OpOut
+0-3 OP
+4 Mo
+5 Cinv
+6 Ci(A1)
+7 SignEx
+
+
 JA
 JNBE	SHORT L	2	符号なし比較で「>」なら分岐
 条件：(CF OR ZF) = 0	ODITSZAPC
