@@ -2,3 +2,6 @@
 *.exe
 *.ods#
 *.ods#
+*.abs
+*.sim
+*.pdf
