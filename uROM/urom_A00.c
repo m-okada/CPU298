@@ -144,9 +144,9 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // W+XL->L
 	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_W, WR_X, ALU_A_ACC, ALU_B_H)) ; // XH->W
 	set_code(make_code(0, ALU_OP_ADC0, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // XH+0+CY->H
-// [HL]->W
-// [HL+1]->H
-// W->L
+	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_THRU, WB_W, WR_HL, ALU_A_ACC, ALU_B_BUS)) ; // [HL]->W
+	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_INC, WB_H, WR_HL, ALU_A_ACC, ALU_B_BUS)) ; // [HL+1]->H
+	set_code(make_code(0, ALU_OP_A_Thru, 0, WB_L, WR_NOP, ALU_A_W, ALU_B_BUS)) ; // W->L
 //[HL]->A
 //	set_code(make_code(0, 0, ADDR_THRU, WB_X, WR_HL, 0, 0)) ;// HL->X
 //	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_THRU, WB_L, WR_X, ALU_A_ACC, ALU_B_BUS)) ;// [X]->L
