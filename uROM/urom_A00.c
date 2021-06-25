@@ -42,6 +42,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_ADC0 (0x0E)
 #define ALU_OP_All_1 (0x0F)
 
+#define WR_NOP 0x00
 #define WR_HL 0x00
 #define WR_X 0x01
 #define WR_Y 0x02
@@ -60,6 +61,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_A_ACC 0
 #define ALU_A_W 1
 
+#define ALU_B_NOP 0
 #define ALU_B_BUS 0
 #define ALU_B_W 1
 #define ALU_B_H 2
@@ -142,12 +144,15 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // W+XL->L
 	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_W, WR_X, ALU_A_ACC, ALU_B_H)) ; // XH->W
 	set_code(make_code(0, ALU_OP_ADC0, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // XH+0+CY->H
-
-	set_code(make_code(0, 0, ADDR_THRU, WB_X, WR_HL, 0, 0)) ;// HL->X
-//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X]->L
-//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// [X+1]->H
-//	set_code(make_code(0, ALU_OP_B_Thru, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ;// HL->X
-	set_code(make_code(ENDF, ALU_OP_B_Thru, ADDR_THRU, WB_ACC, WR_X, ALU_A_ACC, 0)) ;// [X]->A
+// [HL]->W
+// [HL+1]->H
+// W->L
+//[HL]->A
+//	set_code(make_code(0, 0, ADDR_THRU, WB_X, WR_HL, 0, 0)) ;// HL->X
+//	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_THRU, WB_L, WR_X, ALU_A_ACC, ALU_B_BUS)) ;// [X]->L
+//	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_INC, WB_H, WR_X, ALU_A_ACC, ALU_B_BUS)) ;// [X+1]->H
+	set_code(make_code(MEM_READ, ALU_OP_B_Thru, ADDR_THRU, WB_ACC, WR_HL, ALU_A_ACC, ALU_B_BUS)) ;// [HL]->A
+	set_code(END_MARK) ;
 
 
 	set_opecode(0x28) ; // MOV X,imm16
@@ -168,6 +173,10 @@ void make_rom(void){
 	set_code(make_code(MEM_READ, ALU_OP_B_Thru, 0, WB_H, WR_PC, 0, ALU_B_BUS)) ;
 	set_code(PC_INC) ;
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_Y, WR_HL, 0, 0)) ;	// HL->Y
+
+
+	set_opecode(0xD0) ; // INC A
+	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// HL->Y
 
 
 	set_opecode(0xEE) ; // JMPS

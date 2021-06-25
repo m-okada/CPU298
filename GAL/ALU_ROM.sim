@@ -19,7 +19,7 @@ PIN  19 =  SignEx
 %EQUATION
 CInv =>
     A0 & !A1 & A2 & M
-  # !A0 & A1 & A2 & M
+  # !A0 & A1 & M
 
 Ci =>
     A1 & A2
