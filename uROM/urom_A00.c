@@ -208,6 +208,8 @@ void make_rom(void){
 	set_opecode(0xEF) ; // JMPN @（検証まだ）
 	set_code(PC_INC | END_MARK) ;
 
+	set_opecode(0xF0) ; // break
+	set_code(PC_INC | END_MARK) ;
 
 	set_opecode(0xF8) ; // CALL imm16
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, 0)) ; // imm8->L
@@ -225,12 +227,16 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0をLへ
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
+	set_code(HLX) ; // HL->X
+	// [X]->L
+	// [X+]->H
+	// HL->PC リスタートアドレスがXに残っているのはご愛嬌
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_PC, WR_HL, 0, 0)) ; // HL->PC
 
 
 	set_opecode(CODE_FETCH) ;
 	// バスへ出すアドレスをセレクタで切り替えるなら、PC->アドレスバス、と同時にPC+をPCにライトバックというテもある
-	// その場合2to1セレクタx16で、最低でもIC4つ増えるので。
+	// ADDRのDEC+CYを使うのがいいかな。切り替え＋INC出力で。その場合2to1セレクタx16で、最低でもIC4つ増えるので。
 	set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_NONE, WR_PC, 0, 0)) ; // PC->OUT あ、ここでオペコードふぇっちしとかないと、次で消えちゃう
 	set_code(PC_INC | END_MARK) ; // PC+ -> PC
 }
