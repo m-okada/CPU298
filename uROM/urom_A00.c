@@ -208,8 +208,10 @@ void make_rom(void){
 	set_opecode(0xEF) ; // JMPN @（検証まだ）
 	set_code(PC_INC | END_MARK) ;
 
+
 	set_opecode(0xF0) ; // break
-	set_code(PC_INC | END_MARK) ;
+	set_code(END_MARK) ;
+
 
 	set_opecode(0xF8) ; // CALL imm16
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, 0)) ; // imm8->L
@@ -220,6 +222,18 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, ADDR_DEC, WB_Y, WR_Y, 0, 0)) ; // Y-
 	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_W, WR_PC, 0, ALU_B_H)) ; // PCH->W
 	set_code(make_code(MEM_WRITE, ALU_OP_B, ADDR_THRU, WB_Y, WR_Y, 0, ALU_B_W)) ; // [Y]<-W
+	set_code(make_code(0, ALU_OP_NOP, ADDR_DEC, WB_Y, WR_Y, 0, 0)) ; // Y-
+	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_W, WR_PC, 0, ALU_B_L)) ; // PCL->W
+	set_code(make_code(MEM_WRITE, ALU_OP_B, ADDR_THRU, WB_Y, WR_Y, 0, ALU_B_W)) ; // [Y]<-W
+	set_code(HLPC | END_MARK) ; // HL->PC
+
+
+	set_opecode(0xFB) ; // RET
+	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_L, WR_Y, 0, ALU_B_BUS)) ; // [Y]->L
+	set_code(make_code(0, ALU_OP_NOP, ADDR_INC, WB_Y, WR_Y, 0, 0)) ; // Y+
+	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_H, WR_Y, 0, ALU_B_BUS)) ; // [Y]->H
+	set_code(make_code(0, ALU_OP_NOP, ADDR_INC, WB_Y, WR_Y, 0, 0)) ; // Y+
+	set_code(HLPC | END_MARK) ;
 
 
 	set_opecode(CODE_RESET) ; // Reset
