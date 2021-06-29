@@ -1,0 +1,16 @@
+Name     SignEx ;
+PartNo   00 ;
+Date     2021/06/29 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G16V8 ;
+
+
+pin 2 = a ;
+pin 18 = y ;
+
+y = !a ;
+
