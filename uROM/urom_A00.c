@@ -249,9 +249,10 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0をLへ
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
-	set_code(HLX) ; // HL->X
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_L, WR_X, 0, ALU_B_BUS)) ; // [X]->L
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_X, 0, ALU_B_BUS)) ; // [X+1]->H
+//	set_code(HLX) ; // HL->X
+	// X--
+//	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_L, WR_X, 0, ALU_B_BUS)) ; // [X]->L
+//	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_X, 0, ALU_B_BUS)) ; // [X+1]->H
 	set_code(HLPC | END_MARK) ; // HL->PC
 
 
