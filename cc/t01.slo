@@ -1,0 +1,5 @@
+func foo(int x):int{
+	return x*2 ;
+}
+
+print foo(20) ;

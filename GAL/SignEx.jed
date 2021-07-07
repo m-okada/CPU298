@@ -1,7 +1,7 @@
 
 CUPL(WM)        5.0a  Serial# 60008009
 Device          g16v8s  Library DLIB-h-40-9
-Created         Tue Jun 29 00:20:43 2021
+Created         Tue Jul 06 00:47:24 2021
 Name            SignEx 
 Partno          00 
 Revision        01 
@@ -20,4 +20,4 @@ Location
 *L02144 11111111111111111111111111111111
 *L02176 111111111111111110
 *C0D0E
-*783F
+*7840

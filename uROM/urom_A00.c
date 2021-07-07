@@ -62,7 +62,8 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_A_W 1
 
 #define ALU_B_NOP 0
-#define ALU_B_ACC 0 // ACCを出すに変更。検証中。
+// #define ALU_B_ACC 0 // ACCを出すに変更。検証中。W出しに戻した。ADD回路通した遅延より、BThruの方が動作速度で有利なので
+#define ALU_B_W 0
 #define ALU_B_BUS 1
 #define ALU_B_H 2
 #define ALU_B_L 3
@@ -191,6 +192,17 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_Y, WR_HL, 0, 0)) ; // HL->Y
 
+
+	set_opecode(0x73) ; // ADD X,[imm16]
+	// imm16->HL
+	// [imm16]->HL
+	// L+XL->L
+	// H+CY+XH->H
+	// HL->X
+
+	set_opecode(0x80) ; // ADD A,A
+	set_code(make_code(0, ALU_OP_A, 0, WB_W, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A->W
+	set_code(make_code(ENDF, ALU_OP_ADD, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A+=W
 
 	set_opecode(0xD0) ; // INC A
 	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// A++
