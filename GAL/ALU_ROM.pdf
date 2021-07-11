@@ -5,7 +5,7 @@
   {Program "CUPL(WM) Version 5.0a"}
   {DBtype "Schematic"}
   {DBvrev 1.01}
-  {DBtime "Thu Jun 24 07:11:03 2021 "}
+  {DBtime "Thu Jul 08 10:39:55 2021 "}
   {DBunit "MIL"}
   {DBgrid 10}
   {Lyrstr "WIRES" 1 "BUS" 1 "GATE" 2 "IEEE" 2 "PINFUN" 3 "PINNUM" 1 
@@ -33,10 +33,11 @@
  {SYMBOL
   {PIN_DEF
    [Ly "PINCON"]
-   {P A0 {Pt "INPUT"}{Lq 0}{Ploc 100 200}}
-   {P A1 {Pt "INPUT"}{Lq 0}{Ploc 100 180}}
-   {P A2 {Pt "INPUT"}{Lq 0}{Ploc 100 160}}
-   {P M {Pt "INPUT"}{Lq 0}{Ploc 100 140}}
+   {P A0 {Pt "INPUT"}{Lq 0}{Ploc 100 220}}
+   {P A1 {Pt "INPUT"}{Lq 0}{Ploc 100 200}}
+   {P A2 {Pt "INPUT"}{Lq 0}{Ploc 100 180}}
+   {P M {Pt "INPUT"}{Lq 0}{Ploc 100 160}}
+   {P E {Pt "INPUT"}{Lq 0}{Ploc 100 140}}
    {P CINV {Pt "INPUT"}{Lq 0}{Ploc 100 120}}
    {P D0 {Pt "INPUT"}{Lq 0}{Ploc 100 100}}
    {P D1 {Pt "INPUT"}{Lq 0}{Ploc 100 80}}
@@ -50,10 +51,11 @@
   {PKG
    [Ly "REFDES"]
    [Ts 25][Tj "CB"][Tr 0][Tm "N"]
-   {Rdl 190 230}
+   {Rdl 190 250}
 
    [Ly "PINNUM"]
    [Ts 15][Tj "RC"]
+   {Pnl 120 230}
    {Pnl 120 210}
    {Pnl 120 190}
    {Pnl 120 170}
@@ -68,13 +70,14 @@
    {Pnl 260 30}
    {Pnl 260 50}
 
-   {Sd A 2 3 4 5 12 13 14 17 18 19 15 16}
+   {Sd A 2 3 4 5 6 12 13 14 17 18 19 15 16}
   }
 
   {PIC
    [Ly "GATE"]
    [Ts 15][Tj "LC"][Tr 0][Tm "N"]
-   {R 130 220 250 0}
+   {R 130 240 250 0}
+   {L 130 220 100 220}
    {L 130 200 100 200}
    {L 130 180 100 180}
    {L 130 160 100 160}
@@ -89,10 +92,11 @@
    {L 250 40 280 40}
    [Ly "PINNAM"]
    [Tj "LC"]
-   {T "A0" 140 200}
-   {T "A1" 140 180}
-   {T "A2" 140 160}
-   {T "M" 140 140}
+   {T "A0" 140 220}
+   {T "A1" 140 200}
+   {T "A2" 140 180}
+   {T "M" 140 160}
+   {T "E" 140 140}
    {T "CINV" 140 120}
    {T "D0" 140 100}
    {T "D1" 140 80}
@@ -115,7 +119,7 @@
    {EX
     [Ly "ATTR2"]
     [Ts 12][Tj "CT"][Tr 0][Tm "N"]
-    {At PLD E:\CPU298\CPU298\GAL\ALU_ROM 190 220}
+    {At PLD E:\CPU298\CPU298\GAL\ALU_ROM 190 240}
    }
   }
  }
@@ -132,6 +136,8 @@
    {N A2
    }
    {N M
+   }
+   {N E
    }
    {N CINV
    }

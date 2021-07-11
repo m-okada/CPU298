@@ -13,6 +13,7 @@ PIN 2 = A0 ;
 PIN 3 = A1 ;
 pin 4 = A2 ;
 pin 5 = M ;
+pin 6 = E ;
 
 pin 19 = SignEx ;
 pin 18 = FL ;
@@ -32,4 +33,4 @@ D1=(A2&A0)#(A0&M)#(A2&!A1&!A0&!M)#(A2&A1&M) ;
 D0=(!A2&A1&!M)#(A2&A0&M)#(A2&A1&M) ;
 Mo=(!A2&!A1)#(!A2&!A0&!M)#(!A1&!A0)#(A1&A0&M) ;
 Ci=(A2&A1) ;
-FL=!((!A1&!A0&!M)#(A1&A0&M)#(A2&!A1&!A0)) ;
+FL=(!((!A1&!A0&!M)#(A1&A0&M)#(A2&!A1&!A0))) & E ;

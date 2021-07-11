@@ -1,0 +1,22 @@
+Name     ALU_SUB ;
+PartNo   00 ;
+Date     2021/07/11 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G22v10 ;
+
+
+
+pin 2 = a ;
+pin 3 = b ;
+pin 4 = c ;
+pin 5 = d ;
+
+pin 21 = y2 ;
+pin 22 = y ;
+
+y = ((a & b) # (a&!c)) $ d ;
+y2 = !y ;

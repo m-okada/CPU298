@@ -183,7 +183,7 @@ void make_rom(void){
 
 
 	set_opecode(0x68) ; // MOV X,0
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0をLへ
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // インド人を右へ
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0)) ; // HL->X
 
@@ -194,11 +194,17 @@ void make_rom(void){
 
 
 	set_opecode(0x73) ; // ADD X,[imm16]
-	// imm16->HL
-	// [imm16]->HL
-	// L+XL->L
-	// H+CY+XH->H
-	// HL->X
+
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, WR_PC, ALU_A_ACC, ALU_B_BUS)) ; // imm8->L
+	set_code(PC_INC) ;
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, WR_PC, ALU_A_ACC, ALU_B_BUS)) ; // imm8->H
+	set_code(PC_INC) ;
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ; // [HL]->W
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // [HL+]->H
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // W->L
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // L+XL->L
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // H+CY+XH->H
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_X, 0, 0, 0)) ; // HL->X
 
 	set_opecode(0x80) ; // ADD A,A
 	set_code(make_code(0, ALU_OP_A, 0, WB_W, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A->W
