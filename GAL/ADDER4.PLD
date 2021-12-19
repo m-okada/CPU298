@@ -1,0 +1,50 @@
+Name     ADDER4 ;
+PartNo   00 ;
+Date     2021/07/15 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G22V10 ;
+
+
+pin 1 = C0 ;
+pin 2 = A1 ;
+pin 3 = B1 ;
+pin 4 = A2 ;
+pin 5 = B2 ;
+pin 6 = A3 ;
+pin 7 = B3 ;
+pin 8 = A4 ;
+pin 9 = B4 ;
+
+pin 22 = S4 ;
+pin 21 = S3 ;
+pin 20 = C4 ;
+pin 19 = pC4 ;
+pin 18 = pS4 ;
+pin 17 = pS3 ;
+pin 16 = S2 ;
+pin 15 = S1 ;
+
+
+nC0 = !C0 ;
+nG1 = !(A1 & B1) ;
+nP1 = !(A1 # B1) ;
+nG2 = !(A2 & B2) ;
+nP2 = !(A2 # B2) ;
+nG3 = !(A3 & B3) ;
+nP3 = !(A3 # B3) ;
+nG4 = !(A4 & B4) ;
+nP4 = !(A4 # B4) ;
+
+pC4 = !nP4 # (nP3 & nG4) # (nP2 & nG4 & nG3) # (nG4 & nG3 & nG2 & nG1 & nC0) ;
+C4 = !(pC4 # (nP1 & nG4 & nG3 & nG2)) ;
+pS4 = !(!nP3 # (nP2 & nG3) # (nP1 & nG3 & nG2) # (nG3 & nG2 & nG1 & nC0)) ;
+S4 = (!nP4 & nG4) $ pS4 ;
+pS3 = !(!nP2 # (nP1 & nG2) # (nC0 & nG2 & nG1)) ;
+S3 = (!nP3 & nG3) $ pS3 ;
+
+S2 = (!nP2 & nG2) $ !(!nP1 # (nG1 & nC0)) ;
+S1 = !nC0 $ (!nP1 & nG1) ;

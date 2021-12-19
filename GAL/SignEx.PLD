@@ -8,12 +8,26 @@ Assembly None ;
 Location  ;
 Device   G16V8 ;
 
-
-pin 2 = a ;
-pin 18 = y ;
-
-y = !a ;
-
-function sel(s, a, b){
-	s = s & a # !s & b ;
+function sel2(s, a, b){
+	sel2 = s & a # !s & b ;
 }
+
+
+pin 1 = SS ;
+pin 2 = D0 ;
+pin 3 = D1 ;
+pin 4 = D2 ;
+pin 5 = D3 ;
+pin 6 = D4 ;
+pin 7 = D5 ;
+pin 8 = D6 ;
+pin 9 = D7 ;
+
+pin 19 = sel2(SS,D0,D7) ;
+pin 18 = sel2(SS,D1,D7) ;
+pin 17 = sel2(SS,D2,D7) ;
+pin 16 = sel2(SS,D3,D7) ;
+pin 15 = sel2(SS,D4,D7) ;
+pin 14 = sel2(SS,D5,D7) ;
+pin 13 = sel2(SS,D6,D7) ;
+

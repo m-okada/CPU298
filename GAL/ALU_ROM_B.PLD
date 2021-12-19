@@ -1,0 +1,40 @@
+Name     ALU_ROM_B ;
+PartNo   00 ;
+Date     2021/06/07 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G22V10 ;
+
+
+PIN 2 = A0 ;
+PIN 3 = A1 ;
+pin 4 = A2 ;
+pin 5 = M ;
+pin 6 = E ;
+
+pin 23 = SHR ;
+pin 22 = SignEx ;
+pin 21 = FL ;
+PIN 20 = Mo ;
+PIN 19 = D3 ;
+PIN 18 = D2 ;
+PIN 17 = D1 ;
+PIN 16 = D0 ;
+pin 15 = CInv ;
+pin 14 = BThru ;
+
+SignEx = !A2 & A1 & A0 & M ;
+SHR = A2 & A1 & A0 & M ;
+BThru = A2 & !A1 & !A0 & M ;
+
+CInv=(A1&!A0&M)#(A2&!A1&A0&M) ;
+D3=(!A1&!A0&M)#(!A2&A0&!M)#(A1&A0&M)#(A2&!A1&!M)#(A2&!A0&!M) ;
+D2=(!A2&!A1&A0)#(!A1&A0&!M)#(!A2&A1&!M)#(A1&!A0&!M)#(A2&!A1&!A0&M)#(A2&A1&A0&M) ;
+D1=(A2&A0)#(A0&M)#(A2&!A1&!A0&!M)#(A2&A1&M) ;
+D0=(!A2&A1&!M)#(A2&A0&M)#(A2&A1&M) ;
+Mo=(!A2&!A1)#(!A2&!A0&!M)#(!A1&!A0)#(A1&A0&M) ;
+Ci=(A2&A1) ;
+FL=(!((!A1&!A0&!M)#(A1&A0&M)#(A2&!A1&!A0))) & E ;
