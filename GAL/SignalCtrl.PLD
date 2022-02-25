@@ -1,4 +1,4 @@
-Name     SignEx ;
+Name     SignalCtrl ;
 PartNo   00 ;
 Date     2021/12/26 ;
 Revision 01 ;
@@ -6,11 +6,13 @@ Designer Engineer ;
 Company  Symphony Co.,Ltd. ;
 Assembly None ;
 Location  ;
-Device   G16V8 ;
+Device   G22V10 ;
 
 function sel2(s, a, b){
 	sel2 = s & a # !s & b ;
 }
+
+
 
 pin 1 = SS ;
 pin 2 = D0 ;
@@ -22,14 +24,14 @@ pin 7 = D5 ;
 pin 8 = D6 ;
 pin 9 = D7 ;
 
-pin 19 = O0 ;
-pin 18 = O1 ;
-pin 17 = O2 ;
-pin 16 = O3 ;
-pin 15 = O4 ;
-pin 14 = O5 ;
-pin 13 = O6 ;
-pin 12 = O7 ;
+pin 21 = O0 ;
+pin 20 = O1 ;
+pin 19 = O2 ;
+pin 18 = O3 ;
+pin 17 = O4 ;
+pin 16 = O5 ;
+pin 15 = O6 ;
+pin 14 = O7 ;
 
 O0 = sel2(SS,D0,D7) ;
 O1 = sel2(SS,D1,D7) ;

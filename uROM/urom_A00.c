@@ -40,7 +40,8 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_ADC (0x0C)
 #define ALU_OP_SBB (0x0D)
 #define ALU_OP_ADC0 (0x0E)
-#define ALU_OP_All_1 (0x0F)
+//#define ALU_OP_All_1 (0x0F) // 未使用
+#define ALU_OP_ROR (0x0F)
 
 #define WR_NOP 0x00
 #define WR_HL 0x00
@@ -279,15 +280,16 @@ void make_rom(void){
 	set_code(HLPC | END_MARK) ;
 
 
-	set_opecode(CODE_RESET) ; // Reset アドレス0:1にあるアドレスにJMP
+	set_opecode(CODE_RESET) ; // Reset ゼロページ実装に伴い、FFFE:FFFF のアドレスに変更。
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xE01 から始まるようにする。
 	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, 0, 0, 0)) ; // 0をLへ
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, 0, 0, 0)) ; // 0をHへ
-//	set_code(HLX) ; // HL->X
-	// X--
-//	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_L, WR_X, 0, ALU_B_BUS)) ; // [X]->L
-//	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_X, 0, ALU_B_BUS)) ; // [X+1]->H
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_W, 0, ALU_A_W, 0)) ;// W-
+	set_code(W2H) ;// W->H
+	set_code(W2L) ;// W->L
+	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ;// [HL]->W
+	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ;// [HL-] -> L
+	set_code(W2H) ;// W->H
 	set_code(HLPC | END_MARK) ; // HL->PC
 
 

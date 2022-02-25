@@ -1,6 +1,11 @@
 %SIGNAL
-PIN  18 =  DO_JMP_Y 
-PIN  17 =  JMP_OP_Y 
+PIN  23 =  AsyncReset 
+PIN  15 =  DO_JMP_Y 
+PIN  19 =  JMP_OP0 
+PIN  18 =  JMP_OP1 
+PIN  17 =  JMP_OP2 
+PIN  16 =  JMP_OP3 
+PIN  14 =  JMP_OP_Y 
 PIN   2 =  OP0 
 PIN   3 =  OP1 
 PIN   4 =  OP2 
@@ -9,21 +14,119 @@ PIN   6 =  OP4
 PIN   7 =  OP5 
 PIN   8 =  OP6 
 PIN   9 =  OP7 
-PIN  11 =  cf 
-PIN  10 =  zf 
+PIN  10 =  cy 
+PIN  22 =  cy_Y 
+PIN   1 =  fclk 
+PIN  13 =  sf 
+PIN  20 =  sf_Y 
+PIN  11 =  zf 
+PIN  21 =  zf_Y 
 %END
 
 %FIELD
 %END
 
 %EQUATION
-JMP_OP =>
-    !OP3 & !OP4 & OP5 & OP6 & OP7
+DO_JMP_Y =>
+    OP0 & !OP1 & OP2 & !cy & !zf
+  # OP0 & OP1 & !OP2 & zf
+  # OP0 & OP1 & OP2 & sf
+  # !OP0 & OP1 & !OP2 & !zf
+  # !OP0 & OP1 & OP2 & !sf
+  # OP0 & !OP1 & !OP2 & cy
+  # !OP0 & !OP1 & !OP2 & !cy
+  # !OP0 & !OP1 & OP2 & zf
+  # !OP0 & !OP1 & OP2 & cy
+
+JMP_OP0 =>
+    OP0 & !OP1 & OP2 & !cy & !zf
+  # JMP_OP_Y & !OP0 & OP1 & !OP2 & !zf
+  # JMP_OP_Y & !OP0 & OP1 & OP2 & !sf
+  # JMP_OP_Y & !OP0 & !OP1 & !OP2 & !cy
+  # JMP_OP_Y & !OP0 & !OP1 & OP2 & zf
+  # JMP_OP_Y & !OP0 & !OP1 & OP2 & cy
+  # OP0 & OP1 & !OP2 & zf
+  # OP0 & OP1 & OP2 & sf
+  # OP0 & !OP1 & !OP2 & cy
+  # !JMP_OP_Y & OP0
+
+JMP_OP1 =>
+    OP1
+  # JMP_OP_Y
+
+JMP_OP2 =>
+    OP2
+  # JMP_OP_Y
+
+JMP_OP3 =>
+    OP3
+  # JMP_OP_Y
 
 JMP_OP_Y =>
     !OP3 & !OP4 & OP5 & OP6 & OP7
 
+cy_Y.d  =>
+    cy
+
+cy_Y.ar sf_Y.ar zf_Y.ar  =>
+    AsyncReset
+
+cy_Y.sp sf_Y.sp zf_Y.sp  =>
+    0 
+
+nDO_JMP =>
+    !OP0 & !OP1 & !OP2 & !cy
+  # OP0 & !OP1 & !OP2 & cy
+  # !OP0 & OP1 & !OP2 & !zf
+  # OP0 & OP1 & !OP2 & zf
+  # !OP0 & !OP1 & OP2 & cy
+  # !OP0 & !OP1 & OP2 & zf
+  # OP0 & !OP1 & OP2 & !cy & !zf
+  # !OP0 & OP1 & OP2 & !sf
+  # OP0 & OP1 & OP2 & sf
+
+sf_Y.d  =>
+    sf
+
+sf_Y.ar  =>
+    
+sf_Y.sp  =>
+    
+zf_Y.d  =>
+    zf
+
+zf_Y.ar  =>
+    
+zf_Y.sp  =>
+    
+AsyncReset.oe  =>
+    0 
+
+DO_JMP_Y.oe  =>
+    1 
+
+JMP_OP0.oe  =>
+    1 
+
+JMP_OP1.oe  =>
+    1 
+
+JMP_OP2.oe  =>
+    1 
+
+JMP_OP3.oe  =>
+    1 
+
 JMP_OP_Y.oe  =>
+    1 
+
+cy_Y.oe  =>
+    1 
+
+sf_Y.oe  =>
+    1 
+
+zf_Y.oe  =>
     1 
 
 %END

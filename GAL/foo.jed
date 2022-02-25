@@ -1,0 +1,19 @@
+
+CUPL(WM)        5.0a  Serial# 60008009
+Device          g22v10  Library DLIB-h-40-1
+Created         Sun Dec 26 10:17:04 2021
+Name            foo 
+Partno          00 
+Revision        01 
+Date            2021/12/26 
+Designer        Engineer 
+Company         Symphony Co.,Ltd. 
+Assembly        None 
+Location        
+*QP24 
+*QF5892 
+*G0 
+*F0 
+*L05824 00000011000000110000001000000000
+*C01C0
+*5A54
