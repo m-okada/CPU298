@@ -5,7 +5,7 @@
   {Program "CUPL(WM) Version 5.0a"}
   {DBtype "Schematic"}
   {DBvrev 1.01}
-  {DBtime "Wed Feb 16 18:36:39 2022 "}
+  {DBtime "Sun Mar 20 06:01:59 2022 "}
   {DBunit "MIL"}
   {DBgrid 10}
   {Lyrstr "WIRES" 1 "BUS" 1 "GATE" 2 "IEEE" 2 "PINFUN" 3 "PINNUM" 1 
@@ -47,11 +47,11 @@
    {P SF {Pt "INPUT"}{Lq 0}{Ploc 100 40}}
    {P ASYNCRES {Pt "INPUT"}{Lq 0}{Ploc 100 20}}
    {P JMP_OP_Y {Pt "I/O"}{Lq 0}{Ploc 360 20}}
-   {P DO_JMP_Y {Pt "I/O"}{Lq 0}{Ploc 360 40}}
-   {P JMP_OP3 {Pt "I/O"}{Lq 0}{Ploc 360 60}}
-   {P JMP_OP2 {Pt "I/O"}{Lq 0}{Ploc 360 80}}
-   {P JMP_OP1 {Pt "I/O"}{Lq 0}{Ploc 360 100}}
-   {P JMP_OP0 {Pt "I/O"}{Lq 0}{Ploc 360 120}}
+   {P JMP_OP3 {Pt "I/O"}{Lq 0}{Ploc 360 40}}
+   {P JMP_OP2 {Pt "I/O"}{Lq 0}{Ploc 360 60}}
+   {P JMP_OP1 {Pt "I/O"}{Lq 0}{Ploc 360 80}}
+   {P JMP_OP0 {Pt "I/O"}{Lq 0}{Ploc 360 100}}
+   {P DO_JMP_Y {Pt "I/O"}{Lq 0}{Ploc 360 120}}
    {P SF_Y {Pt "OUTPUT"}{Lq 0}{Ploc 360 140}}
    {P ZF_Y {Pt "OUTPUT"}{Lq 0}{Ploc 360 160}}
    {P CY_Y {Pt "OUTPUT"}{Lq 0}{Ploc 360 180}}
@@ -136,11 +136,11 @@
    {T "ASYNCRES" 140 20}
    [Tj "RC"]
    {T "JMP_OP_Y" 320 20}
-   {T "DO_JMP_Y" 320 40}
-   {T "JMP_OP3" 320 60}
-   {T "JMP_OP2" 320 80}
-   {T "JMP_OP1" 320 100}
-   {T "JMP_OP0" 320 120}
+   {T "JMP_OP3" 320 40}
+   {T "JMP_OP2" 320 60}
+   {T "JMP_OP1" 320 80}
+   {T "JMP_OP0" 320 100}
+   {T "DO_JMP_Y" 320 120}
    {T "SF_Y" 320 140}
    {T "ZF_Y" 320 160}
    {T "CY_Y" 320 180}
@@ -195,8 +195,6 @@
    }
    {N JMP_OP_Y
    }
-   {N DO_JMP_Y
-   }
    {N JMP_OP3
    }
    {N JMP_OP2
@@ -204,6 +202,8 @@
    {N JMP_OP1
    }
    {N JMP_OP0
+   }
+   {N DO_JMP_Y
    }
    {N SF_Y
    }
