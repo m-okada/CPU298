@@ -1,8 +1,8 @@
 
 CUPL(WM)        5.0a  Serial# 60008009
 Device          g22v10  Library DLIB-h-40-1
-Created         Fri Sep 02 09:18:41 2022
-Name            Jcc 
+Created         Fri Sep 02 09:22:17 2022
+Name            Jcc2 
 Partno          00 
 Revision        01 
 Date            2022/02/16 
@@ -81,4 +81,4 @@ Location
 *L05792 00000000000000000110101011111111
 *L05824 11110011000000110000001000000000
 *CD1E0
-*5360
+*5390

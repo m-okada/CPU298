@@ -1,0 +1,62 @@
+Name     Jcc2 ;
+PartNo   00 ;
+Date     2022/09/02 ;
+Revision 01 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G22v10 ;
+
+pin [2..9] = [OP0..7] ;
+pin 10 = cy ;
+pin 11 = zf ;
+pin 13 = sf ;
+
+pin 1 = fclk ;
+
+pin 22 = cy_Y ;
+pin 21 = zf_Y ;
+pin 20 = sf_Y ;
+
+pin 19 = DO_JMP_Y ;
+
+pin 18 = JMP_OP0 ;
+pin 17 = JMP_OP1 ;
+pin 16 = JMP_OP2 ;
+pin 15 = JMP_OP3 ;
+pin 14 = JMP_OP_Y ;
+pin 23 = AsyncReset ;
+
+cy_Y.ar = AsyncReset ;
+cy_Y.sp = 'b'0 ;
+cy_Y.D = cy ;
+
+zf_Y.ar = AsyncReset ;
+zf_Y.sp = 'b'0 ;
+zf_Y.D = zf ;
+
+sf_Y.ar = AsyncReset ;
+sf_Y.sp = 'b'0 ;
+sf_Y.D = sf ;
+
+/*cy_Y.D = cy ;
+cy_Y.CK = fclk ; */
+
+nDO_JMP =
+	((!OP0 & !OP1 & !OP2) & !cy) #
+	((OP0 & !OP1 & !OP2) & cy) #
+	((!OP0 & OP1 & !OP2) & !zf) #
+	((OP0 & OP1 & !OP2) & zf) #
+	((!OP0 & !OP1 & OP2) & (cy # zf)) #
+	((OP0 & !OP1 & OP2) & !(cy # zf)) #
+	((!OP0 & OP1 & OP2) & !sf) #
+	((OP0 & OP1 & OP2) & sf) ;
+
+JMP_OP_Y = OP7 & OP6 & OP5 & !OP4 & !OP3 ;
+DO_JMP_Y = nDO_JMP ;
+
+JMP_OP0 = (!JMP_OP_Y & OP0) # (JMP_OP_Y & nDO_JMP) ;
+JMP_OP1 = (!JMP_OP_Y & OP1) # JMP_OP_Y ;
+JMP_OP2 = (!JMP_OP_Y & OP2) # JMP_OP_Y ;
+JMP_OP3 = (!JMP_OP_Y & OP3) # JMP_OP_Y ;
