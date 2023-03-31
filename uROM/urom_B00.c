@@ -38,7 +38,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_NOT (0x04)
 #define ALU_OP_INCA (0x05)
 #define ALU_OP_DECA (0x06)
-#define ALU_OP_SignEx (0x07)
+#define ALU_OP_SX (0x07)
 #define ALU_OP_A (0x08)
 #define ALU_OP_B (0x09)
 #define ALU_OP_ADD (0x0A)
@@ -215,14 +215,10 @@ void make_rom(void){
 	set_code(PC_INC) ;
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_H, WR_PC, ALU_A_ACC, ALU_B_BUS)) ; // imm8->H
 	set_code(PC_INC) ;
-
 	// [HL]->W [HL+]->H W->L XL->W W+L->L XH->W W+H+CY->H HL->X
-
 	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ; // [HL]->W
 	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_HL, 0, ALU_B_BUS)) ; // [HL+]->H
-
 	set_code(W2L) ;
-
 //	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_L, WR_NOP, 0, ALU_B_W)) ; // W->L　ここでHLが壊れる,Lを保存するならWを壊していい
 //	set_code(make_code(0, ALU_OP_ADD, ADDR_THRU, WB_L, WR_X, 0, 0)) ; // L->W (L+XL->L step1) 無駄を省いた
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // XL+W->L (L+XL->L step2)
@@ -230,9 +226,11 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_ADC, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // W+CY+XH->H (H+CY+XH->H step2)
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0)) ; // HL->X
 
+
 	set_opecode(0x80) ; // ADD A,A
 	set_code(make_code(0, ALU_OP_A, 0, WB_W, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A->W
 	set_code(make_code(ENDF, ALU_OP_ADD, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A+=W
+
 
 	set_opecode(0xD0) ; // INC A
 	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// A++
@@ -242,7 +240,7 @@ void make_rom(void){
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(PC_INC) ;
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_PC, ALU_A_W, ALU_B_L)) ; // PCL+W->L
-	set_code(make_code(0, ALU_OP_SignEx, 0, WB_W, 0, ALU_A_W, 0)) ;	// W.SignEx->W
+	set_code(make_code(0, ALU_OP_SX, 0, WB_W, 0, ALU_A_W, 0)) ;	// W.Sign->W
 	set_code(make_code(0, ALU_OP_ADC, 0, WB_H, WR_PC, ALU_A_W, ALU_B_H)) ;	// CY+W+PCH->H
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0)) ;	// HL->PC
 
@@ -291,7 +289,7 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0
 	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H
-	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> H
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L
 //	set_code(W2H) ;// W->H
 //	set_code(W2L) ;// W->L
 	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W
@@ -302,6 +300,8 @@ void make_rom(void){
 
 	set_opecode(CODE_FETCH) ;
 	// バスへ出すアドレスをセレクタで切り替えるなら、PC->アドレスバス、と同時にPC+をPCにライトバックというテもある
+	//  HQ↑でバッファにラッチするのでアドレスモードをE↑で拉致すると１サイクルでPC+も出来るが。<- だめだった
+	//  X+→>busのほうが有効性高いぽ。
 	// ADDRのDEC+CYを使うのがいいかな。切り替え＋INC出力で。その場合2to1セレクタx16で、最低でもIC4つ増えるので。
 	set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_NONE, WR_PC, 0, 0)) ; // PC->OUT ここでオペコードふぇっちしとかないと、次で消えちゃう
 	set_code(PC_INC | END_MARK) ; // PC+ -> PC
