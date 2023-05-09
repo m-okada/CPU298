@@ -1,7 +1,7 @@
 
 CUPL(WM)        5.0a  Serial# 60008009
 Device          g22v10  Library DLIB-h-40-1
-Created         Mon Jun 07 11:18:15 2021
+Created         Tue May 09 14:36:42 2023
 Name            rom4to7 
 Partno          00 
 Revision        01 
@@ -62,4 +62,4 @@ Location
 *L05792 00000000000000000011110011111111
 *L05824 00000011000000110000001000000000
 *CA017
-*C16F
+*C174

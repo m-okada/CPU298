@@ -1,6 +1,6 @@
 *.obj
 *.exe
-*.ods#
+*.bak
 *.ods#
 *.abs
 *.sim

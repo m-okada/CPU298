@@ -179,7 +179,7 @@ void make_rom(void){
 	set_code(PC_INC | END_MARK) ;
 
 
-	set_opecode(0x06) ; // MOV A,[X+imm8]
+	set_opecode(0x06) ; // MOV A,[X+imm8] 符号なしオフセット
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // W+XL->L
 	set_code(make_code(0, ALU_OP_B, 0, WB_W, WR_X, ALU_A_ACC, ALU_B_H)) ; // XH->W
@@ -291,6 +291,10 @@ void make_rom(void){
 	set_opecode(0xD0) ; // INC A
 	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// A++
 
+
+	set_opecode(0xD8) ; // DEC A
+	set_code(make_code(ENDF, ALU_OP_DECA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// A++
+
 // Ex
 
 	set_opecode(0xEE) ; // JMPS
@@ -309,6 +313,11 @@ void make_rom(void){
 
 	set_opecode(0xF0) ; // break
 	set_code(END_MARK) ;
+
+
+	set_opecode(0xF5) ; // STC
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // 0->W
+	set_code(make_code(END_MARK, ALU_OP_DECA, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // W-
 
 
 	set_opecode(0xF8) ; // CALL imm16
