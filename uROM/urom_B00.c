@@ -47,7 +47,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_SBB (0x0D)
 #define ALU_OP_ADC0 (0x0E)
 //#define ALU_OP_All_1 (0x0F) // 未使用
-#define ALU_OP_ROR (0x0F)
+#define ALU_OP_SAR (0x0F)
 
 #define WR_NONE 0x00
 #define WR_NOP 0x00
@@ -244,7 +244,7 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, WR_NONE, ALU_A_ACC, ALU_B_NOP)) ;
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, ALU_A_ACC, ALU_B_NOP)) ;
 
-//6x
+// 6x
 
 	set_opecode(0x61) ; // MOV Y,imm16
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, ALU_B_BUS)) ;
@@ -265,6 +265,9 @@ void make_rom(void){
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_Y, WR_HL, 0, 0)) ; // HL->Y
 
 
+// 7x
+
+
 	set_opecode(0x73) ; // ADD X,byte [imm16](WORD PTRいけるんじゃね？)
 
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, ALU_A_ACC, ALU_B_BUS)) ; // imm8->L
@@ -283,9 +286,23 @@ void make_rom(void){
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0)) ; // HL->X
 
 
+// 8x
+
+
 	set_opecode(0x80) ; // ADD A,A
 	set_code(make_code(0, ALU_OP_A, 0, WB_W, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A->W
 	set_code(make_code(ENDF, ALU_OP_ADD, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_W)) ;	// A+=W
+
+
+// 9x
+
+// Ax
+
+// Bx
+
+// Cx
+
+// Dx
 
 
 	set_opecode(0xD0) ; // INC A
@@ -294,6 +311,7 @@ void make_rom(void){
 
 	set_opecode(0xD8) ; // DEC A
 	set_code(make_code(ENDF, ALU_OP_DECA, 0, WB_ACC, WR_NOP, ALU_A_ACC, ALU_B_NOP)) ;	// A++
+
 
 // Ex
 
@@ -317,7 +335,14 @@ void make_rom(void){
 
 	set_opecode(0xF5) ; // STC
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // 0->W
-	set_code(make_code(END_MARK, ALU_OP_DECA, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // W-
+//	set_code(make_code(0, ALU_OP_NOT, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // !W
+	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // W+
+
+
+	set_opecode(0xF6) ; // CMC
+	set_code(make_code(0, ALU_OP_SAR, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // CY:W>>
+	set_code(make_code(0, ALU_OP_NOT, 0, WB_W, WR_NONE, ALU_A_W, 0)) ; // !W
+	set_code(make_code(ENDF, ALU_OP_ADD, 0, WB_W, WR_NONE, ALU_A_W, ALU_B_W)) ; // W+W
 
 
 	set_opecode(0xF8) ; // CALL imm16
@@ -353,16 +378,16 @@ void make_rom(void){
 	// Reset ゼロページ実装に伴い、FFFE:FFFF のアドレスに変更。
 	set_opecode(CODE_RESET) ;
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xE01 から始まるようにする。
-	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0
-	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H
-	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L
+	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP 0
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0 1
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H 2
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L 3
 //	set_code(W2H) ;// W->H
 //	set_code(W2L) ;// W->L
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_DEC, WB_L, WR_HL, 0, ALU_B_BUS)) ;// [HL-] -> L
-	set_code(W2H) ;// W->H
-	set_code(HLPC | END_MARK) ; // HL->PC
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W 4
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_DEC, WB_L, WR_HL, 0, ALU_B_BUS)) ;// [HL-] -> L 5
+	set_code(W2H) ;// W->H 6
+	set_code(HLPC | END_MARK) ; // HL->PC 7
 
 
 	set_opecode(CODE_FETCH) ;
