@@ -38,7 +38,7 @@ signed intをunsigned intで出力
 
 エラーメッセージ
 <= < 以外の比較 ( >= > )
-１６進ミディエイト
+１６進イミディエイト
 globalの初期化
 
 mainの引数
@@ -140,7 +140,7 @@ int main1();
 int main(int argc, char*argv[])
 {
 	if(argc<=1){
-		putstring("Usage : ccq8 inputFileName [outputFileName]\x0a") ;
+		putstring("Usage : ccq inputFileName [outputFileName]\x0a") ;
 		exit(0) ;
 	}
 	if(argc>=2){
@@ -533,6 +533,8 @@ void be_pop(int n)
 
 /*
 	シンボルテーブル
+
+	298は絶対アドレスCALLだけにしたので、要対応
 
 	table先頭から
 		Nバイト シンボル
