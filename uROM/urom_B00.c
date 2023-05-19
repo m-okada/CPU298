@@ -507,14 +507,52 @@ void write_romfile(void){
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
-			fprintf(fp, "/* %x */", i>>8) ;
+			fprintf(fp, "/* %x */\n", i>>8) ;
 		}
-		fprintf(fp, "0x%x,", rom[i]) ;
+		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
 		if((i%8)==7){
 			fprintf(fp, "\n") ;
 		}
 	}
 	fprintf(fp, "};\n") ;
+	fclose(fp) ;
+
+
+	fp=fopen("298uROM_HI.h", "w") ;
+	fprintf(fp, "static unsigned short urom[]={\n") ;
+
+	int l=0 ;
+	for(i=0 ; i<ROM_SIZE ; i++){
+		if((i & 0xff)==0){
+			fprintf(fp, "/* %x */\n", i>>8) ;
+			l=0 ;
+		}
+		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
+		if((i%16)==15){
+			fprintf(fp, "// %X \n", l) ;
+			l++ ;
+		}
+	}
+	fprintf(fp, "};\n") ;
+	fclose(fp) ;
+
+
+	fp=fopen("298uROM_LO.h", "w") ;
+	fprintf(fp, "static unsigned short urom[]={\n") ;
+
+	for(i=0 ; i<ROM_SIZE ; i++){
+		if((i & 0xff)==0){
+			fprintf(fp, "/* %x""x */\n", i>>8) ;
+			l=0 ;
+		}
+		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
+		if((i%16)==15){
+			fprintf(fp, "// %X \n", l) ;
+			l++ ;
+		}
+	}
+	fprintf(fp, "};\n") ;
+	fclose(fp) ;
 }
 
 int main(void){
