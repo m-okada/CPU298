@@ -378,7 +378,7 @@ void make_rom(void){
 	// Reset ゼロページ実装に伴い、FFFE:FFFF のアドレスに変更。
 	set_opecode(CODE_RESET) ;
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xE01 から始まるようにする。
-	set_code(make_code(0, ALU_OP_NOP, 0, 0, 0, 0, 0)) ; // 落ち着くまでNOP 0
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_NONE, 0, 0, 0)) ; // 落ち着くまでNOP 0
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0 1
 	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H 2
 	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L 3
@@ -401,7 +401,7 @@ void make_rom(void){
 
 void setup(void){
 	PC_INC = make_code(0, ALU_OP_NOP, ADDR_INC, WB_PC, WR_PC, 0, ALU_B_BUS) ;
-	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B, 0, 0, WR_PC, 0, ALU_B_BUS) ;
+	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B, 0, WB_NONE, WR_PC, 0, ALU_B_BUS) ;
 	HLPC = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_PC, WR_HL, 0, 0) ; // HLをPCへ
 	HLX = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0) ; // HL->X
 	HLY = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_Y, WR_HL, 0, 0) ; // HL->Y
@@ -501,30 +501,32 @@ void write_romfile(void){
 	fprintf(fp, ":00000001FF\x0D\x0A") ;
 	fclose(fp) ;
 
+	int l=0 ;
 
 	fp=fopen("298uROM.h", "w") ;
 	fprintf(fp, "static unsigned int urom[]={\n") ;
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
-			fprintf(fp, "/* %x */\n", i>>8) ;
+			fprintf(fp, "/* %x""x */\n", i>>8) ;
+			l=0 ;
 		}
-		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
-		if((i%8)==7){
-			fprintf(fp, "\n") ;
+		fprintf(fp, "0x%04x,", rom[i]) ;
+		if((i%16)==15){
+			fprintf(fp, "// %X \n", l) ;
+			l++ ;
 		}
 	}
 	fprintf(fp, "};\n") ;
 	fclose(fp) ;
 
 
-	fp=fopen("298uROM_HI.h", "w") ;
+	fp=fopen("298uROM_L.h", "w") ;
 	fprintf(fp, "static unsigned short urom[]={\n") ;
 
-	int l=0 ;
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
-			fprintf(fp, "/* %x */\n", i>>8) ;
+			fprintf(fp, "/* %x""x */\n", i>>8) ;
 			l=0 ;
 		}
 		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
@@ -537,7 +539,7 @@ void write_romfile(void){
 	fclose(fp) ;
 
 
-	fp=fopen("298uROM_LO.h", "w") ;
+	fp=fopen("298uROM_H.h", "w") ;
 	fprintf(fp, "static unsigned short urom[]={\n") ;
 
 	for(i=0 ; i<ROM_SIZE ; i++){
@@ -545,7 +547,7 @@ void write_romfile(void){
 			fprintf(fp, "/* %x""x */\n", i>>8) ;
 			l=0 ;
 		}
-		fprintf(fp, "0x%02x,", rom[i] & 0xff) ;
+		fprintf(fp, "0x%02x,", (rom[i] >> 8) & 0xff) ;
 		if((i%16)==15){
 			fprintf(fp, "// %X \n", l) ;
 			l++ ;
