@@ -6,4 +6,5 @@
 *.sim
 *.pdf
 KiCAD/CPU298/fp-info-cache
+GAL/CM*
 

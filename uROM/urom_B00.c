@@ -57,14 +57,14 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define WR_PC 0x03
 
 //	write back control.
-#define WB_NONE 0x00
-#define WB_ACC 0x01
-#define WB_W 0x02
-#define WB_H 0x03
-#define WB_L 0x04
-#define WB_X 0x05
-#define WB_Y 0x06
-#define WB_PC 0x07
+#define WB_NONE 0x07
+#define WB_ACC 0x00
+#define WB_W 0x01
+#define WB_H 0x02
+#define WB_L 0x03
+#define WB_X 0x04
+#define WB_Y 0x05
+#define WB_PC 0x06
 
 #define ALU_A_ACC 0
 #define ALU_A_W 1

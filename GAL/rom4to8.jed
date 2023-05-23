@@ -1,7 +1,7 @@
 
 CUPL(WM)        5.0a  Serial# 60008009
 Device          g16v8s  Library DLIB-h-40-9
-Created         Wed May 10 01:20:35 2023
+Created         Tue May 23 14:23:20 2023
 Name            rom4to8 
 Partno          00 
 Revision        01 
@@ -45,4 +45,4 @@ Location
 *L02144 11111111111111111111111111111111
 *L02176 111111111111111110
 *C6D7D
-*3AD1
+*3AE4

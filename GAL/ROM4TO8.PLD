@@ -6,7 +6,7 @@ Designer Engineer ;
 Company  Symphony Co.,Ltd. ;
 Assembly None ;
 Location  ;
-Device   g16v8 ;
+Device   G16V8 ;
 
 PIN 2 = A0 ;
 PIN 3 = A1 ;
