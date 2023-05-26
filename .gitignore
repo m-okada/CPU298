@@ -6,5 +6,11 @@
 *.sim
 *.pdf
 KiCAD/CPU298/fp-info-cache
-GAL/CM*
+GAL/C*
+
+*.fit
+*.io
+*.pin
+*.pla
+*.tt[1-9]
 

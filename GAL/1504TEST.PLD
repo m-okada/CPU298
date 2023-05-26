@@ -1,0 +1,31 @@
+Name     test ;
+PartNo   00 ;
+Date     2018/08/25 ;
+Revision 01 ;
+Designer Engineer ;
+Company  HC2908 ;
+Assembly None ;
+Location  ;
+Device   f1504ispplcc44  ;
+
+property ATMEL {-strategy pd1 ON};
+
+/* *************** INPUT PINS *********************/
+PIN 43 = gclk ;
+PIN  4   =   A                      ; /*                                 */ 
+PIN  5   =   B                      ; /*                                 */ 
+pin 8 = en ;
+
+pin 11 = PD1 ;
+/* *************** OUTPUT PINS *********************/
+PIN  6   =    Q                     ; /*                                 */ 
+PIN 40 = Q2 ;
+pin 12 = i12 ; /*'B'0 ; */
+
+Q = A & B ;
+/* Q2.ar = A ; */
+Q2.d = !Q2 ;
+Q2.ck = gclk ;
+/* Q2.ce = en ; */
+
+i12 = 'B'0 ;

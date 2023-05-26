@@ -1,0 +1,44 @@
+Name     rom4to8_t ;
+PartNo   00 ;
+Date     2023/05/28 ;
+Revision 02 ;
+Designer Engineer ;
+Company  Symphony Co.,Ltd. ;
+Assembly None ;
+Location  ;
+Device   G16V8 ;
+
+PIN 2 = A0 ;
+PIN 3 = A1 ;
+pin 4 = A2 ;
+pin 5 = A3 ;
+
+pin 19 = D0 ; /* Inv */
+pin 18 = D1 ; /* FL */
+PIN 17 = D2 ; /* Ci */
+PIN 16 = D3 ; /* Mo */
+PIN 15 = D4 ; /* D0 */
+PIN 14 = D5 ; /* D1 */
+PIN 13 = D6 ; /* D2 */
+PIN 12 = D7 ; /* D3 */
+
+field input = [A3..0] ;
+field data_out = [D7..0] ;
+table input=>data_out{
+0=>'B'00001010 ; /* NOP */
+1=>'B'10001000 ; /* AND */
+2=>'B'11101000 ; /* OR */
+3=>'B'01101000 ; /* XOR */
+4=>'B'01011000 ; /* NOT */
+5=>'B'00000001 ; /* INCA */
+6=>'B'11110000 ; /* DECA */
+7=>'B'10101010 ; /* SXT */
+8=>'B'10101010 ; /* A-thru */
+9=>'B'11001010 ; /* B-thru */
+A=>'B'11000000 ; /* ADD */
+B=>'B'00110001 ; /* SUB */
+C=>'B'11000100 ; /* ADDC */
+D=>'B'00110101 ; /* SUBB */
+E=>'B'00000100 ; /* ADC0 */
+F=>'B'10101100 ; /* SRC */
+}
