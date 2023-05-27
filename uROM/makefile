@@ -1,5 +1,5 @@
-all : urom_B00
+all : urom
 
-urom_B00 : urom_B00.c
-	cl urom_B00.c
-	urom_B00.exe
+urom : urom.c
+	cl urom.c
+	urom.exe

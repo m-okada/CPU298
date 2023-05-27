@@ -379,8 +379,6 @@ void make_rom(void){
 	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0 1
 	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H 2
 	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L 3
-//	set_code(W2H) ;// W->H
-//	set_code(W2L) ;// W->L
 	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W 4
 	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_DEC, WB_L, WR_HL, 0, ALU_B_BUS)) ;// [HL-] -> L 5
 	set_code(W2H) ;// W->H 6
