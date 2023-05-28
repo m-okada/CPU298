@@ -111,7 +111,7 @@ WORD make_code(WORD write_read, WORD alu_op, WORD op_ex, WORD wb, WORD wr, WORD 
 }
 
 WORD NOP ;	//	No operation.
-WORD FETCH_BYTE ;	//	オペコードフェッチ
+
 WORD FETCH_READDATA ;	//	1バイトフェッチ
 WORD PC_INC ;	//	PC+
 WORD HLPC, PCHL ;
@@ -346,11 +346,12 @@ void make_rom(void){
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, ALU_B_BUS)) ; // imm8->L
 	set_code(PC_INC) ;
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_H, WR_PC, 0, ALU_B_BUS)) ; // imm8->H
-	set_code(PC_INC) ;
+	set_code(PC_INC) ; // <- このアドレスがスタックに積まれる
 
 	set_code(make_code(0, ALU_OP_NOP, ADDR_DEC, WB_Y, WR_Y, 0, 0)) ; // Y-
 	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_W, WR_PC, 0, ALU_B_H)) ; // PCH->W
 	set_code(make_code(MEM_WRITE, ALU_OP_A, ADDR_THRU, 0, WR_Y, ALU_A_W, 0)) ; // [Y]<-W
+
 	set_code(make_code(0, ALU_OP_NOP, ADDR_DEC, WB_Y, WR_Y, 0, 0)) ; // Y-
 	set_code(make_code(0, ALU_OP_B, ADDR_THRU, WB_W, WR_PC, 0, ALU_B_L)) ; // PCL->W
 	set_code(make_code(MEM_WRITE, ALU_OP_A, ADDR_THRU, 0, WR_Y, ALU_A_W, 0)) ; // [Y]<-W
@@ -375,28 +376,24 @@ void make_rom(void){
 	// Reset ゼロページ実装に伴い、FFFE:FFFF のアドレスに変更。
 	set_opecode(CODE_RESET) ;
 	// リセット直後は前回の命令の状態が残ってるので、実際の動作は 0xE01 から始まるようにする。
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_NONE, 0, 0, 0)) ; // 落ち着くまでNOP 0
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0 1
-	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H 2
-	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L 3
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W 4
-	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_DEC, WB_L, WR_HL, 0, ALU_B_BUS)) ;// [HL-] -> L 5
-	set_code(W2H) ;// W->H 6
-	set_code(HLPC | END_MARK) ; // HL->PC 7
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_NONE, 0, 0, 0)) ; // 落ち着くまでNOP Step:0
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_W, 0, 0, 0)) ;// W<-0 Step:1
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_H, 0, ALU_A_W, 0)) ;// W- -> H Step:2
+	set_code(make_code(0, ALU_OP_DECA, 0, WB_L, 0, ALU_A_W, 0)) ;// W- -> L Step:3
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_THRU, WB_W, WR_HL, 0, ALU_B_BUS)) ;// [HL]->W Step:4
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_DEC, WB_L, WR_HL, 0, ALU_B_BUS)) ;// [HL-] -> L Step:5
+	set_code(W2H) ;// W->H Step:6
+	set_code(HLPC | END_MARK) ; // HL->PC Step:7
 
 
 	set_opecode(CODE_FETCH) ;
-	// バスへ出すアドレスをセレクタで切り替えるなら、PC->アドレスバス、と同時にPC+をPCにライトバックというテもある
-	//  HQ↑でバッファにラッチするのでアドレスモードをE↑で拉致すると１サイクルでPC+も出来るが。<- だめだった
-	//  X+→>busのほうが有効性高いぽ。
-	// ADDRのDEC+CYを使うのがいいかな。切り替え＋INC出力で。その場合2to1セレクタx16で、最低でもIC4つ増えるので。
-	set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_NONE, WR_PC, 0, 0)) ; // PC->OUT ここでオペコードふぇっちしとかないと、次で消えちゃう
+	set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_NONE, WR_PC, 0, 0)) ; // PC->OUT ここでオペコードfetch
 	set_code(PC_INC | END_MARK) ; // PC+ -> PC
 }
 
 void setup(void){
 	PC_INC = make_code(0, ALU_OP_NOP, ADDR_INC, WB_PC, WR_PC, 0, ALU_B_BUS) ;
-	FETCH_BYTE = make_code(MEM_READ, ALU_OP_B, 0, WB_NONE, WR_PC, 0, ALU_B_BUS) ;
+
 	HLPC = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_PC, WR_HL, 0, 0) ; // HLをPCへ
 	HLX = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0) ; // HL->X
 	HLY = make_code(0, ALU_OP_NOP, ADDR_THRU, WB_Y, WR_HL, 0, 0) ; // HL->Y

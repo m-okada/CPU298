@@ -25,6 +25,8 @@ PIN 12 = D7 ; /* D3 */
 field input = [A3..0] ;
 field data_out = [D7..0] ;
 table input=>data_out{
+/*    DDDDMCFI
+      3210oiLv  */
 0=>'B'00001010 ; /* NOP */
 1=>'B'10001000 ; /* AND */
 2=>'B'11101000 ; /* OR */
