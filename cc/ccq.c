@@ -28,9 +28,9 @@ asm出力（debug用）
 単項+-
 
 ・ToDo
-QV8コード出力
+298コード出力
 
-スタックフレーム A3 にベースポインタ
+スタックフレーム Y にベースポインタ
 
 コード、定数、データエリア分離
 
@@ -501,7 +501,7 @@ void be_push()
 {
 //	emit(1, "\xb0"); /* push w0 */
 //	emit(1, "\x60"); /* push w0 */
-	asm_out("push w0") ;
+	asm_out("push X") ;
 }
 
 //	lvalue又は関数アドレスのpush
@@ -509,7 +509,7 @@ void be_push_addr()
 {
 //	emit(1, "\xb4"); /* push a0 */
 //	emit(1, "\x64"); /* push a0 */
-	asm_out("push a0") ;
+	asm_out("push Y") ;
 }
 
 /*

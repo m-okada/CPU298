@@ -65,10 +65,12 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define WB_Y 0x05
 #define WB_PC 0x06
 
+#define ALU_A_NONE 0
 #define ALU_A_ACC 0
 #define ALU_A_W 1
 
 #define ALU_B_NOP 0 // Wを出すけどNOPを強調する時に使ってね
+#define ALU_B_NONE 0
 // W出しBからはデータバスの値も入ってくるのでBthru を別回路にするのが有利。
 #define ALU_B_W 0
 #define ALU_B_BUS 1
@@ -77,7 +79,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 
 #define ADDR_THRU 0
 #define ADDR_INC 1
-#define ADDR_ZPAGE 2 // Zero page アドレス出力用（予約）
+#define ADDR_ADD 2 // 8ビット符号付きオフセット加算
 #define ADDR_DEC 3
 
 #define MEM_WRITE 0x02
@@ -229,6 +231,15 @@ void make_rom(void){
 	set_opecode(0x1C) ; // MOV [X],A
 	set_code(make_code(MEM_WRITE, ALU_OP_A, ADDR_THRU, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NOP)) ;
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NOP)) ;
+
+
+// 2x
+	set_opecode(0x2A) ; // XCHG X,Y
+	set_code(make_code(0, ALU_OP_B, 0, WB_H, WR_X, ALU_A_NONE, ALU_B_H)) ; // XH->H
+	set_code(make_code(0, ALU_OP_B, 0, WB_L, WR_X, ALU_A_NONE, ALU_B_L)) ; // XL->L
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_X, WR_Y, ALU_A_NONE, ALU_B_NONE)) ; // Y->X
+	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_Y, WR_HL, ALU_A_W, ALU_B_NONE)) ; // HL->Y
+
 
 
 // 5x
