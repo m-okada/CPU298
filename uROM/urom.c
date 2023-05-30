@@ -25,6 +25,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 /*
  E0～E7はシーケンサでEEかEFに変換されるので、ここをリセットとコードフェッチに使う
 */
+// State
 #define CODE_RESET 0xe0
 #define CODE_FETCH 0xe1
 #define CODE_EXEC 0xe3	//	実際にはOPECODEなので、これは使わない
@@ -49,13 +50,14 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_ADC0 (0x0E)
 #define ALU_OP_SHR (0x0F)
 
+// Word register selector
 #define WR_NONE 0x00
 #define WR_HL 0x00
 #define WR_X 0x01
 #define WR_Y 0x02
 #define WR_PC 0x03
 
-//	write back control.
+//	Write back control.
 #define WB_NONE 0x07 // Bit7を書き戻しなしに変更したので、書き戻さない場合はWB_NONEをちゃんと書きましょう。
 #define WB_ACC 0x00
 #define WB_W 0x01
@@ -65,12 +67,13 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define WB_Y 0x05
 #define WB_PC 0x06
 
+// ALU-A selector
 #define ALU_A_NONE 0
 #define ALU_A_ACC 0
 #define ALU_A_W 1
 
-#define ALU_B_NOP 0 // Wを出すけどNOPを強調する時に使ってね
-#define ALU_B_NONE 0
+// ALU-B selector
+#define ALU_B_NONE 0 // Wを出すけどNONEを強調する時に使ってね
 // W出しBからはデータバスの値も入ってくるのでBthru を別回路にするのが有利。
 #define ALU_B_W 0
 #define ALU_B_BUS 1
@@ -146,7 +149,7 @@ void make_rom(void){
 // 0x
 
 	set_opecode(0) ; // NOP
-	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, 0, ALU_A_ACC, ALU_B_NOP)) ;
+	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, 0, ALU_A_ACC, ALU_B_NONE)) ;
 
 
 	set_opecode(0x01) ; // MOV A,imm8
@@ -155,17 +158,17 @@ void make_rom(void){
 
 
 	set_opecode(0x02) ; // MOV A,[imm16]
-	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NOP)) ; // [PC]->L
+	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NONE)) ; // [PC]->L
 	set_code(PC_INC) ;
-	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NOP)) ; // [PC]->H
-	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_ACC, WR_HL, 0, ALU_B_NOP)) ; // [HL]->A
+	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NONE)) ; // [PC]->H
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_ACC, WR_HL, 0, ALU_B_NONE)) ; // [HL]->A
 	set_code(PC_INC | END_MARK) ;
 
 
 	set_opecode(0x03) ; // MOV A,[imm8]
-	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NOP)) ; // [PC]->L
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, WR_PC, 0, ALU_B_NOP)) ; // 0->H
-	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_ACC, WR_HL, 0, ALU_B_NOP)) ; // [HL]->A
+	set_code(make_code(MEM_READ, ALU_OP_NOP, 0, WB_L, WR_PC, 0, ALU_B_NONE)) ; // [PC]->L
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, WR_PC, 0, ALU_B_NONE)) ; // 0->H
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_ACC, WR_HL, 0, ALU_B_NONE)) ; // [HL]->A
 	set_code(PC_INC | END_MARK) ;
 
 
@@ -229,8 +232,8 @@ void make_rom(void){
 
 
 	set_opecode(0x1C) ; // MOV [X],A
-	set_code(make_code(MEM_WRITE, ALU_OP_A, ADDR_THRU, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NOP)) ;
-	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NOP)) ;
+	set_code(make_code(MEM_WRITE, ALU_OP_A, ADDR_THRU, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NONE)) ;
+	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, WR_X, ALU_A_ACC, ALU_B_NONE)) ;
 
 
 // 2x
@@ -249,9 +252,9 @@ void make_rom(void){
 
 
 	set_opecode(0x59) ; // MOV X,0
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, WR_NONE, ALU_A_ACC, ALU_B_NOP)) ;
-	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, WR_NONE, ALU_A_ACC, ALU_B_NOP)) ;
-	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, ALU_A_ACC, ALU_B_NOP)) ;
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_H, WR_NONE, ALU_A_ACC, ALU_B_NONE)) ;
+	set_code(make_code(0, ALU_OP_NOP, 0, WB_L, WR_NONE, ALU_A_ACC, ALU_B_NONE)) ;
+	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, ALU_A_ACC, ALU_B_NONE)) ;
 
 // 6x
 
@@ -315,11 +318,11 @@ void make_rom(void){
 
 
 	set_opecode(0xD0) ; // INC A
-	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NONE, ALU_A_ACC, ALU_B_NOP)) ;	// A++
+	set_code(make_code(ENDF, ALU_OP_INCA, 0, WB_ACC, WR_NONE, ALU_A_ACC, ALU_B_NONE)) ;	// A++
 
 
 	set_opecode(0xD8) ; // DEC A
-	set_code(make_code(ENDF, ALU_OP_DECA, 0, WB_ACC, WR_NONE, ALU_A_ACC, ALU_B_NOP)) ;	// A++
+	set_code(make_code(ENDF, ALU_OP_DECA, 0, WB_ACC, WR_NONE, ALU_A_ACC, ALU_B_NONE)) ;	// A++
 
 
 // Ex
@@ -335,7 +338,7 @@ void make_rom(void){
 */
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(PC_INC) ;
-	set_code(make_code(ENDF, ALU_OP_B, ADDR_ADD, WB_PC, WR_PC, 0, ALU_B_W)) ; // imm8+PC->PC
+	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_ADD, WB_PC, WR_PC, 0, ALU_B_W)) ; // imm8+PC->PC
 
 	set_opecode(0xEF) ; // JMPN @（検証まだ）
 	set_code(PC_INC | END_MARK) ;
