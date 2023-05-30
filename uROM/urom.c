@@ -325,13 +325,17 @@ void make_rom(void){
 // Ex
 
 	set_opecode(0xEE) ; // JMPS
+/*
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(PC_INC) ;
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_PC, ALU_A_W, ALU_B_L)) ; // PCL+W->L
 	set_code(make_code(0, ALU_OP_SXT, 0, WB_W, 0, ALU_A_W, 0)) ;	// W.Sign->W
 	set_code(make_code(0, ALU_OP_ADC, 0, WB_H, WR_PC, ALU_A_W, ALU_B_H)) ;	// CY+W+PCH->H
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_PC, WR_HL, 0, 0)) ;	// HL->PC
-
+*/
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
+	set_code(PC_INC) ;
+	set_code(make_code(ENDF, ALU_OP_B, ADDR_ADD, WB_PC, WR_PC, 0, ALU_B_W)) ; // imm8+PC->PC
 
 	set_opecode(0xEF) ; // JMPN @（検証まだ）
 	set_code(PC_INC | END_MARK) ;
