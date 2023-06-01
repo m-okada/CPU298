@@ -144,7 +144,6 @@ void set_code(WORD code){
 
 void make_rom(void){
 	WORD code ;
-	int i, n ;
 
 // 0x
 
