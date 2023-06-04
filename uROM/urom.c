@@ -45,8 +45,8 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define ALU_OP_B (0x09)
 #define ALU_OP_ADD (0x0A)
 #define ALU_OP_SUB (0x0B)
-#define ALU_OP_ADC (0x0C)
-#define ALU_OP_SBB (0x0D)
+#define ALU_OP_ADDC (0x0C)
+#define ALU_OP_SUBB (0x0D)
 #define ALU_OP_ADC0 (0x0E)
 #define ALU_OP_SHR (0x0F)
 
@@ -99,7 +99,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 
 WORD OPECode ;
 BYTE STEP ;
-
+int step_len[256] ;
 
 WORD make_code(WORD write_read, WORD alu_op, WORD op_ex, WORD wb, WORD wr, WORD alu_a, WORD alu_b){
 	WORD retval=0 ;
@@ -142,8 +142,16 @@ void set_code(WORD code){
 	STEP++ ;
 }
 
+BYTE OP_TBL[]={
+	ALU_OP_ADD, ALU_OP_SUB, ALU_OP_ADDC, ALU_OP_SUBB,
+	ALU_OP_AND, ALU_OP_SUB, ALU_OP_XOR, ALU_OP_OR,
+} ;
+
 void make_rom(void){
 	WORD code ;
+	BYTE alu_op ;
+	BYTE write_back ;
+	int i ;
 
 // 0x
 
@@ -293,23 +301,39 @@ void make_rom(void){
 //	set_code(make_code(0, ALU_OP_ADD, ADDR_THRU, WB_L, WR_X, 0, 0)) ; // L->W (L+XL->L step1) 無駄を省いた
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // XL+W->L (L+XL->L step2)
 	set_code(make_code(0, ALU_OP_B, 0, WB_W, 0, 0, ALU_B_H)) ; //H->W// (H+CY+XH->H step1)
-	set_code(make_code(0, ALU_OP_ADC, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // W+CY+XH->H (H+CY+XH->H step2)
+	set_code(make_code(0, ALU_OP_ADDC, 0, WB_H, WR_X, ALU_A_W, ALU_B_H)) ; // W+CY+XH->H (H+CY+XH->H step2)
 	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_THRU, WB_X, WR_HL, 0, 0)) ; // HL->X
 
 
-// 8x
+// 8x-Bx
+
+	for(i=0x80 ; i<=0xBF ; i+=8){
+		alu_op = OP_TBL[(i-0x80) / 8] ;
+		if(((i-0x80) / 8)==5){
+			write_back = WB_NONE ;
+		}
+		else{
+			write_back = WB_ACC ;
+		}
+		set_opecode(i+0) ; // OP A,A
+		set_code(make_code(0, ALU_OP_NOP, 0, WB_W, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A->W
+		set_code(make_code(ENDF, alu_op, 0, write_back, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A+=W
 
 
-	set_opecode(0x80) ; // ADD A,A
-	set_code(make_code(0, ALU_OP_A, 0, WB_W, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A->W
-	set_code(make_code(ENDF, ALU_OP_ADD, 0, WB_ACC, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A+=W
+		set_opecode(i+1) ; // OP A, imm8
+		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_W, WR_PC, ALU_A_NONE, ALU_B_NONE)) ;	// imm8->W
+		set_code(PC_INC) ;
+		set_code(make_code(ENDF, alu_op, 0, write_back, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A+=W
 
+		set_opecode(i+2) ; // OP A, [imm16]
+		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_L, WR_PC, ALU_A_NONE, ALU_B_NONE)) ;	// imm8->L
+		set_code(PC_INC) ;
+		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_H, WR_PC, ALU_A_NONE, ALU_B_NONE)) ;	// imm8->H
+		set_code(PC_INC) ;
+		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_W, WR_PC, ALU_A_NONE, ALU_B_BUS)) ;	// [HL]->W
+		set_code(make_code(ENDF, alu_op, 0, write_back, WR_HL, ALU_A_ACC, ALU_B_W)) ;	// A+=W
+	}
 
-// 9x
-
-// Ax
-
-// Bx
 
 // Cx
 
@@ -383,6 +407,9 @@ void make_rom(void){
 	set_code(HLPC | END_MARK) ;
 
 
+	set_opecode(0xFD) ; // Dummy
+	set_code(END_MARK) ;
+
 	set_opecode(0xFE) ; // JMP imm16
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, ALU_B_BUS)) ; // imm8->L
 	set_code(PC_INC) ;
@@ -426,15 +453,44 @@ void setup(void){
 void write_romfile(void){
 	FILE* fp ;
 
-	int i ;
+	int i, l ;
 	int tbl_idx=0 ;
 	int opstart=0 ;
 	int zlen=0 ;
 	int mem_idx=0 ;
+	int op_count=0 ;
 
 	int out_count=0 ;
 	int romsize=0 ;
 
+	WORD chksum=0, addr=0 ;
+	int op=0 ;
+	BYTE rom_data = 0 ;
+
+	op_count=0 ;
+	// 命令ごとのSTEPを数える
+	for(i=0 ; i<ROM_SIZE ; i++){
+		int n ;
+
+		op = i / 16 ;
+		op_count++ ;
+
+		if((rom[i] & 0xc000)==0xc000){ // END_MARK
+			step_len[op] = op_count ;
+			for(n=op_count ; n<16 ; n++){
+				i++ ;
+			}
+			op_count=0 ;
+		}
+		else{
+			if(op_count==16){
+				step_len[op]=0 ;
+				op_count = 0 ;
+			}
+		}
+	}
+
+	// *.TXTはLogiSim用ROM/RAMファイル
 	fp=fopen("298uROM.TXT", "w") ;
 	fprintf(fp, "v2.0 raw\x0a") ;
 
@@ -462,7 +518,83 @@ void write_romfile(void){
 	}
 	fclose(fp) ;
 
+	// x8bit ROM 用
+	out_count=0 ;
+	romsize=0 ;
+	zlen=0 ;
 
+	fp=fopen("298uROM_8.TXT", "w") ;
+	fprintf(fp, "v2.0 raw\x0a") ;
+
+	for(i=0 ; i<ROM_SIZE*2 ; i++){
+		int idx = 0 ;
+
+		idx = i / 2 ;
+		if((i % 2)==0){
+			rom_data = rom[idx] & 0xff ;
+		}
+		else{
+			rom_data = (rom[idx] >> 8) & 0xff ;
+		}
+
+		if(rom_data==0){
+			zlen++ ;
+		}
+		else{
+			if(zlen!=0){	//	Output "nnn*0 "
+				fprintf(fp, "%d*0 ", zlen) ;
+				out_count++ ;
+			}
+			zlen=0 ;
+
+			romsize++ ;
+
+			fprintf(fp, "%x ", rom_data) ;
+			out_count++ ;
+
+			if(out_count>=8){
+				fprintf(fp, "\x0a") ;
+				out_count=0 ;
+			}
+		}
+	}
+	fclose(fp) ;
+
+	// 8kx8bit用
+	chksum=0 ;
+	addr=0 ;
+	fp=fopen("298uROM_8.HEX", "wb") ;
+
+	for(i=0 ; i<ROM_SIZE*2 ; i++){
+		int idx = 0 ;
+
+		idx = i / 2 ;
+		if((i % 2)==0){
+			rom_data = rom[idx] & 0xff ;
+		}
+		else{
+			rom_data = (rom[idx] >> 8) & 0xff ;
+		}
+
+		if((i % 16)==0){
+			fprintf(fp, ":10") ;
+			fprintf(fp, "%04X", addr) ;
+			fprintf(fp, "00") ;
+			chksum = 0x10+(addr & 0xff)+((addr>>8)&0xff) ;
+			addr+=16 ;
+		}
+
+		fprintf(fp, "%02X", rom_data) ;
+		chksum += (rom_data) ;
+		if((i%16)==15){
+			fprintf(fp, "%02X\x0D\x0A", ((-chksum) & 0xff)) ;
+			chksum=0 ;
+		}
+	}
+	fprintf(fp, ":00000001FF\x0D\x0A") ;
+	fclose(fp) ;
+
+/*
 	fp=fopen("298uROM_L.HEX", "wb") ;
 
 	WORD chksum=0, addr=0 ;
@@ -517,7 +649,7 @@ void write_romfile(void){
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
-			fprintf(fp, "/* %x""x */\n", i>>8) ;
+			fprintf(fp, "/* %x""x *""/\n", i>>8) ;
 			l=0 ;
 		}
 		fprintf(fp, "0x%04x,", rom[i]) ;
@@ -528,7 +660,37 @@ void write_romfile(void){
 	}
 	fprintf(fp, "};\n") ;
 	fclose(fp) ;
+*/
+/*
+	for(i=0 ; i<256 ; i++){
+		printf("%02X:%d\n", i, step_len[i]) ;
+	}
+*/
+	l=0 ;
 
+	fp=fopen("298uROM_8S.h", "w") ; // 圧縮
+	fprintf(fp, "static unsigned int urom[]={\n") ;
+
+	for(op=0 ; op<256 ; op++){
+		int n ;
+		WORD rom_data ;
+
+		fprintf(fp, "/* %02X"" */\n", op) ;
+		fprintf(fp, "%d,\n", step_len[op]) ;
+
+		for(n=0 ; n<step_len[op] ; n++){
+			rom_data = rom[op*16+n] ;
+			fprintf(fp, "0x%02x,", rom_data & 0xff) ;
+			fprintf(fp, "0x%02x,", (rom_data >> 8) & 0xff) ;
+		}
+
+		fprintf(fp, "\n") ;
+	}
+	fprintf(fp, "};\n") ;
+	fclose(fp) ;
+
+
+	l=0 ;
 
 	fp=fopen("298uROM_L.h", "w") ;
 	fprintf(fp, "static unsigned short urom[]={\n") ;
@@ -547,6 +709,8 @@ void write_romfile(void){
 	fprintf(fp, "};\n") ;
 	fclose(fp) ;
 
+
+	l=0 ;
 
 	fp=fopen("298uROM_H.h", "w") ;
 	fprintf(fp, "static unsigned short urom[]={\n") ;
