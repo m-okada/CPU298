@@ -14,3 +14,7 @@ GAL/C*
 *.pla
 *.tt[1-9]
 
+*.d
+*.o
+uROM/emu/uROM_emu/Debug/*
+*.atsuo

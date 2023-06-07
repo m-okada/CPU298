@@ -251,6 +251,15 @@ void make_rom(void){
 	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_Y, WR_HL, ALU_A_W, ALU_B_NONE)) ; // HL->Y
 
 
+	set_opecode(0x2B) ; // XCHG A,[imm8]
+	set_code(make_code(0, ALU_OP_ZERO, 0, WB_H, WR_NONE, ALU_A_NONE, ALU_B_NONE)) ; //
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, ALU_A_NONE, ALU_B_BUS)) ; //
+	set_code(PC_INC) ;
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_HL, ALU_A_NONE, ALU_B_BUS)) ; //
+	set_code(make_code(MEM_WRITE, ALU_OP_A, 0, WB_NONE, WR_HL, ALU_A_ACC, ALU_B_NONE)) ; //
+	set_code(make_code(ENDF, ALU_OP_B, 0, WB_ACC, WR_NONE, ALU_A_NONE, ALU_B_W)) ; //
+
+
 
 // 5x
 
@@ -490,6 +499,13 @@ void write_romfile(void){
 		}
 	}
 
+/*
+
+ LogiSim ROM files.
+
+*/
+
+
 	// *.TXTはLogiSim用ROM/RAMファイル
 	fp=fopen("298uROM.TXT", "w") ;
 	fprintf(fp, "v2.0 raw\x0a") ;
@@ -517,6 +533,7 @@ void write_romfile(void){
 		}
 	}
 	fclose(fp) ;
+
 
 	// x8bit ROM 用
 	out_count=0 ;
@@ -560,7 +577,13 @@ void write_romfile(void){
 	}
 	fclose(fp) ;
 
-	// 8kx8bit用
+/*
+
+ JEDEC files.
+
+*/
+
+	// 8kx8bit用JEDEC
 	chksum=0 ;
 	addr=0 ;
 	fp=fopen("298uROM_8.HEX", "wb") ;
@@ -594,10 +617,12 @@ void write_romfile(void){
 	fprintf(fp, ":00000001FF\x0D\x0A") ;
 	fclose(fp) ;
 
-/*
+
+	// 4Kx8bit Lo
 	fp=fopen("298uROM_L.HEX", "wb") ;
 
-	WORD chksum=0, addr=0 ;
+	chksum=0 ;
+	addr=0 ;
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i%16)==0){
@@ -619,6 +644,7 @@ void write_romfile(void){
 	fclose(fp) ;
 
 
+	// 4Kx8bit Hi
 	fp=fopen("298uROM_H.HEX", "wb") ;
 
 	chksum=0, addr=0 ;
@@ -642,7 +668,14 @@ void write_romfile(void){
 	fprintf(fp, ":00000001FF\x0D\x0A") ;
 	fclose(fp) ;
 
-	int l=0 ;
+/*
+
+ C language header files.
+
+*/
+
+	// unsigned short array.
+	l=0 ;
 
 	fp=fopen("298uROM.h", "w") ;
 	fprintf(fp, "static unsigned int urom[]={\n") ;
@@ -660,16 +693,18 @@ void write_romfile(void){
 	}
 	fprintf(fp, "};\n") ;
 	fclose(fp) ;
-*/
+
 /*
 	for(i=0 ; i<256 ; i++){
 		printf("%02X:%d\n", i, step_len[i]) ;
 	}
 */
+
+	// Compressed unsigned char array.
 	l=0 ;
 
 	fp=fopen("298uROM_8S.h", "w") ; // 圧縮
-	fprintf(fp, "static unsigned int urom[]={\n") ;
+	fprintf(fp, "static unsigned char urom[]={\n") ;
 
 	for(op=0 ; op<256 ; op++){
 		int n ;
@@ -693,7 +728,7 @@ void write_romfile(void){
 	l=0 ;
 
 	fp=fopen("298uROM_L.h", "w") ;
-	fprintf(fp, "static unsigned short urom[]={\n") ;
+	fprintf(fp, "static unsigned char urom[]={\n") ;
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
@@ -713,7 +748,7 @@ void write_romfile(void){
 	l=0 ;
 
 	fp=fopen("298uROM_H.h", "w") ;
-	fprintf(fp, "static unsigned short urom[]={\n") ;
+	fprintf(fp, "static unsigned char urom[]={\n") ;
 
 	for(i=0 ; i<ROM_SIZE ; i++){
 		if((i & 0xff)==0){
@@ -729,6 +764,7 @@ void write_romfile(void){
 	fprintf(fp, "};\n") ;
 	fclose(fp) ;
 }
+
 
 int main(void){
 	setup() ;
