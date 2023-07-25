@@ -1,9 +1,33 @@
 /*
- * uROM_emu.c
- *
- * Created: 2023/06/07 2:52:02
- * Author : USER
- */
+* uROM_emu.c
+*
+* Created: 2023/06/07 2:52:02
+* Author : USER
+*/
+
+/*
+
+
+parts
+U1 ATMEGA
+U2 64K-SRAM
+U3 Buffer-1
+U4 Buffer-2
+U5 D-FF
+
+pin function
+-> ram-addr
+
+-> ram-data
+
+-> ram-we
+
+-> dff-oe
+
+U5 -> ram-oe
+
+*/
+
 #ifndef F_CPU
 #define F_CPU 8000000UL // 8 MHz clock speed
 #endif

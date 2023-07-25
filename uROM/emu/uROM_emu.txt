@@ -1,36 +1,73 @@
 
+uROM emurator board.
 
 
 
+	  ATMega8-U1
+ PC6 1		28 PC5
+ PD0 2		27 PC4
+ PD1 3		26 PC3
+ PD2 4		25 PC2
+ PD3 5		24 PC1
+ PD4 6		23 PC0
+ Vcc 7		22 GND
+ GND 8		21 AREF
+ PB6 9		20 AVcc
+ PB7 10		19 PB5
+ PD5 11		18 PB4
+ PD6 12		17 PB3
+ PD7 13		16 PB2
+ PB0 14		15 PB1
 
-	  ATMega8
-Reset 1		28
-  PD0 2		27
-  PD1 3		26
-  PD2 4		25
-  PD3 5		24
-  PD4 6		23
-7		22
-8		21
-9		20
-10		19
-11		18
-12		17
-13		16
-14		15
+PC4..0 : addr-hi
+PD7..0 : Data
+PB7..0 ; addr-lo
+PC5 : /WE
+PC6 : /G
 
-M5M5178
-1		28
-2		27
-3		26
-4		25
-5		24
-6		23
-7		22
-8		21
-9		20
-10		19
-11		18
-12		17
-13		16
-14		15
+
+	M5M5178-U2
+  NC 1		28 Vcc
+ A12 2		27 /WE
+  A7 3		26 CE2
+  A6 4		25 A8
+  A5 5		24 A9
+  A4 6		23 A11
+  A3 7		22 /OE
+  A2 8		21 A10
+  A1 9		20 /CS1
+  A0 10		19 DQ8
+ DQ1 11		18 DQ7
+ DQ2 12		17 DQ6
+ DQ3 13		16 DQ5
+ GND 14		15 DQ4
+
+CS2-PUP
+/CS1-PDOUN
+
+
+74HC541-U3 addr-lo
+1	20
+2	19
+3	18
+4	17
+5	16
+6	15
+7	14
+8	13
+9	12
+10	11
+
+
+
+74HCT273-U5
+1	20
+2	19
+3	18
+4	17
+5	16
+6	15
+7	14
+8	13
+9	12
+10	11

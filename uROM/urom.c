@@ -58,7 +58,7 @@ WORD rom_idx[ROM_SIZE]={0} ;
 #define WR_PC 0x03
 
 //	Write back control.
-#define WB_NONE 0x07 // Bit7を書き戻しなしに変更したので、書き戻さない場合はWB_NONEをちゃんと書きましょう。
+#define WB_NONE 0x07 // Bit7が書き戻しなしなので、書き戻さない場合はWB_NONEをちゃんと書きましょう。
 #define WB_ACC 0x00
 #define WB_W 0x01
 #define WB_H 0x02
@@ -189,7 +189,7 @@ void make_rom(void){
 	set_code(PC_INC | END_MARK) ;
 
 
-	set_opecode(0x06) ; // MOV A,[X+imm8] 符号なしオフセット
+	set_opecode(0x06) ; // MOV A,[X+imm8] 符号付きオフセット
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(make_code(0, ALU_OP_ADD, 0, WB_L, WR_X, ALU_A_W, ALU_B_L)) ; // W+XL->L
 	set_code(make_code(0, ALU_OP_B, 0, WB_W, WR_X, ALU_A_ACC, ALU_B_H)) ; // XH->W
@@ -318,11 +318,9 @@ void make_rom(void){
 
 	for(i=0x80 ; i<=0xBF ; i+=8){
 		alu_op = OP_TBL[(i-0x80) / 8] ;
+		write_back = WB_ACC ;
 		if(((i-0x80) / 8)==5){
 			write_back = WB_NONE ;
-		}
-		else{
-			write_back = WB_ACC ;
 		}
 		set_opecode(i+0) ; // OP A,A
 		set_code(make_code(0, ALU_OP_NOP, 0, WB_W, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A->W
@@ -333,6 +331,7 @@ void make_rom(void){
 		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_W, WR_PC, ALU_A_NONE, ALU_B_NONE)) ;	// imm8->W
 		set_code(PC_INC) ;
 		set_code(make_code(ENDF, alu_op, 0, write_back, WR_NONE, ALU_A_ACC, ALU_B_W)) ;	// A+=W
+
 
 		set_opecode(i+2) ; // OP A, [imm16]
 		set_code(make_code(MEM_READ, ALU_OP_NOP, ADDR_THRU, WB_L, WR_PC, ALU_A_NONE, ALU_B_NONE)) ;	// imm8->L
@@ -370,7 +369,7 @@ void make_rom(void){
 */
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_W, WR_PC, 0, ALU_B_BUS)) ; // imm8->W
 	set_code(PC_INC) ;
-	set_code(make_code(ENDF, ALU_OP_NOP, ADDR_ADD, WB_PC, WR_PC, 0, ALU_B_W)) ; // imm8+PC->PC
+	set_code(make_code(ENDF, ALU_OP_A, ADDR_ADD, WB_PC, WR_PC, ALU_A_W, ALU_B_NONE)) ; // imm8+PC->PC
 
 	set_opecode(0xEF) ; // JMPN @（検証まだ）
 	set_code(PC_INC | END_MARK) ;
@@ -378,7 +377,7 @@ void make_rom(void){
 // Fx
 
 	set_opecode(0xF0) ; // break
-	set_code(END_MARK) ;
+	set_code(make_code(ENDF, ALU_OP_NOP, 0, WB_NONE, 0, ALU_A_ACC, ALU_B_NONE)) ; // Same as NOP.
 
 
 	set_opecode(0xF5) ; // STC
@@ -419,12 +418,19 @@ void make_rom(void){
 	set_opecode(0xFD) ; // Dummy
 	set_code(END_MARK) ;
 
+
 	set_opecode(0xFE) ; // JMP imm16
 	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_PC, 0, ALU_B_BUS)) ; // imm8->L
-	set_code(PC_INC) ;
-	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_H, WR_PC, 0, ALU_B_BUS)) ; // imm8->H
-	set_code(PC_INC) ;
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_PC, 0, ALU_B_BUS)) ; // imm8->H
 	set_code(HLPC | END_MARK) ;
+
+
+	set_opecode(0xFF) ; // JMP [X]
+	set_code(make_code(MEM_READ, ALU_OP_B, 0, WB_L, WR_X, 0, ALU_B_BUS)) ; // [X]->L
+	set_code(make_code(MEM_READ, ALU_OP_B, ADDR_INC, WB_H, WR_X, 0, ALU_B_BUS)) ; // [X+1]->H
+	set_code(HLPC | END_MARK) ;
+
+
 
 	// Reset ゼロページ実装に伴い、FFFE:FFFF のアドレスに変更。
 	set_opecode(CODE_RESET) ;

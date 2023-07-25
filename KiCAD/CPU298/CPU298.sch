@@ -77,4 +77,6 @@ Wire Wire Line
 	2750 3350 2600 3350
 Wire Bus Line
 	10550 2350 10550 3050
+Text Label 10700 3050 0    50   ~ 0
+DATABUS
 $EndSCHEMATC
